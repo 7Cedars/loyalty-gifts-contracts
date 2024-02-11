@@ -3,9 +3,9 @@ pragma solidity ^0.8.19;
 
 // import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol"; // ERC165 not implemented for now. 
 // import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol"; // ERC165 not implemented for now. 
-import {ERC1155} from "../../lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol";
-import {LoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.sol";
-import {ILoyaltyGift} from "../../src/interfaces/ILoyaltyGift.sol";
+import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import {MockLoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.sol";
+import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
 
 /**
  * @title Loyalty Gift
@@ -147,11 +147,11 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
     {
         if (address(0) != from) {
             if (msg.sender != to) {
-                try LoyaltyProgram(msg.sender).getBalanceLoyaltyCard(to) {}
+                try MockLoyaltyProgram(msg.sender).getBalanceLoyaltyCard(to) {}
                 catch { revert LoyaltyGift__TransferDenied(address(this)); }
             }
             if (msg.sender != from) {
-                try LoyaltyProgram(msg.sender).getBalanceLoyaltyCard(from) {}
+                try MockLoyaltyProgram(msg.sender).getBalanceLoyaltyCard(from) {}
                 catch { revert LoyaltyGift__TransferDenied(address(this)); }
             }
         } 

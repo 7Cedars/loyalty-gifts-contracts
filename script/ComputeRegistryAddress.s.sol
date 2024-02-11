@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Script, console} from "forge-std/Script.sol";
+import "forge-std/Script.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
-import {ERC6551Registry} from "../test/mocks/ERC6551Registry.sol";
+import "../test/mocks/ERC6551Registry.sol";
 
 contract ComputeRegistryAddress is Script {
     function run() external view {

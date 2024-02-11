@@ -14,7 +14,7 @@ import {ILoyaltyGift} from "../../src/interfaces/ILoyaltyGift.sol";
 import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import {ERC6551Registry} from "../mocks/ERC6551Registry.sol";
-import {LoyaltyCard6551Account} from "./MockLoyaltyCard6551Account.sol";
+import {MockLoyaltyCard6551Account} from "./MockLoyaltyCard6551Account.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 
 /**
@@ -66,7 +66,7 @@ import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
  *   ... £todo. 
  */
 
-contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGuard
+contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGuard
     /* errors */
     error LoyaltyProgram__OnlyOwner();
     error LoyaltyProgram__TransferDenied();
@@ -121,7 +121,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     mapping(address loyaltyGiftAddress => mapping(uint256 loyaltyGiftId => uint256 exists)) private s_LoyaltyVouchersRedeemable; // 0 = false & 1 = true.
     uint256 private s_loyaltyCardCounter;
     ERC6551Registry public s_erc6551Registry;
-    LoyaltyCard6551Account public s_erc6551Implementation;
+    MockLoyaltyCard6551Account public s_erc6551Implementation;
 
     /* Events */
     event DeployedLoyaltyProgram(address indexed owner, string name, string version);
@@ -156,7 +156,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         s_owner = msg.sender;
         s_loyaltyCardCounter = 0;
         s_erc6551Registry = ERC6551Registry(erc6551Registry);
-        s_erc6551Implementation = LoyaltyCard6551Account(erc6551Implementation);
+        s_erc6551Implementation = MockLoyaltyCard6551Account(erc6551Implementation);
 
         DOMAIN_SEPARATOR = hashDomain(
             EIP712Domain({

@@ -57,7 +57,7 @@ sepoliaForkDeploy:
 # @forge script script/DeployRegistry.s.sol:DeployRegistry $(SEPOLIA_FORK_ARGS)
 # @forge script script/ComputeRegistryAddress.s.sol:ComputeRegistryAddress $(SEPOLIA_FORK_ARGS)
 	@forge script script/DeployLoyaltyProgram.s.sol:DeployLoyaltyProgram $(SEPOLIA_FORK_ARGS)
-	@forge script script/DeployLoyaltyGifts.s.sol:DeployMockLoyaltyGifts $(SEPOLIA_FORK_ARGS)
+	@forge script script/DeployLoyaltyGifts.s.sol:DeployPointsForLoyaltyGiftsAndVouchers $(SEPOLIA_FORK_ARGS)
 
 anvilInitiate:
 	@forge script script/DeployRegistry.s.sol:DeployRegistry $(ANVIL_ARGS_0)
@@ -67,7 +67,7 @@ anvilDeployProgram:
 	@forge script script/DeployLoyaltyProgram.s.sol:DeployLoyaltyProgram $(ANVIL_ARGS_1)
 
 anvilDeployGifts:
-	@forge script script/DeployLoyaltyGifts.s.sol:DeployMockLoyaltyGifts $(ANVIL_ARGS_4)
+	@forge script script/DeployLoyaltyGifts.s.sol:DeployPointsForLoyaltyGiftsAndVouchers $(ANVIL_ARGS_4)
 
 anvilInteractions: 
 	@forge script script/Interactions.s.sol:Interactions $(ANVIL_ARGS_1)

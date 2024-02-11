@@ -2,18 +2,23 @@
 pragma solidity ^0.8.19;
 
 import {LoyaltyGift} from "./LoyaltyGift.sol";
-import {ILoyaltyGift} from "../../src/interfaces/ILoyaltyGift.sol";
+import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
 import {ERC1155} from "lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /**
+ * @dev THIS CONTRACT HAS NOT BEEN AUDITED. WORSE: TESTING IS INCOMPLETE. DO NOT DEPLOY ON ANYTHING ELSE THAN A TEST CHAIN! 
+ * 
  * @title Mock Loyalty Gifts
  * @author Seven Cedars
- * @notice A concrete implementation of a loyalty Gift contract. This contract simply exchanges loyalty points for three types of gifts and three types of vouchers.  
+ * @notice A concrete implementation of a loyalty Gift contract. This contract simply exchanges loyalty points for three types of gifts and three types of vouchers.
+ * 
+ * For a mock version of the LoyalProgram contract these gifts interact with, see the test/mocks/test/mocks/MockLoyaltyProgram.sol. 
+ * 
  */
 
-contract MockLoyaltyGifts is LoyaltyGift {
+contract PointsForLoyaltyGiftsAndVouchers is LoyaltyGift {
     uint256[] public tokenised = [0, 0, 0, 1, 1, 1]; // 0 == false, 1 == true.
 
     

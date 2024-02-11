@@ -26,7 +26,7 @@ import {ERC6551AccountLib} from "../../src/lib/ERC6551AccountLib.sol";
  * @notice In this contract everything is same as original, unless stated otherwise. 
  */
 
-contract LoyaltyCard6551Account is IERC165, IERC1271, IERC6551Account, IERC1155Receiver {
+contract MockLoyaltyCard6551Account is IERC165, IERC1271, IERC6551Account, IERC1155Receiver {
     uint256 public nonce;
 
     receive() external payable {}
