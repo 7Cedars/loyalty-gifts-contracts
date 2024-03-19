@@ -18,18 +18,18 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  * 
  */
 
-contract PointsForLoyaltyGiftsAndVouchers is LoyaltyGift {
+contract PointsForLoyaltyGifts is LoyaltyGift {
     uint256[] public tokenised = [0, 0, 0]; // 0 == false, 1 == true.
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
      * 
      * @dev the LoyaltyGift constructor takes to params: uri and tokenised (array denoting which gifts are - tokenised - vouchers.)
-     * 
+     *  £todo URI STILL NEEDS TO BE CHANGED! 
      */
     constructor()
         LoyaltyGift(
-            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmSshfobzx5jtA14xd7zJ1PtmG8xFaPkAq2DZQagiAkSET/{id}",
+            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmX24aGKazfEtBzDip4fS6Jb7MnXd9GbFw5oQ3ZqiRKb3t/{id}",
             tokenised
         )
     {}

@@ -51,12 +51,12 @@ sepoliaForkTest:
 #	@forge test --match-test testCustomerCanClaimGift $(SEPOLIA_FORK_TEST_ARGS) -vvvv 
 	@forge test $(SEPOLIA_FORK_TEST_ARGS)  
 # @forge test --match-contract CardsToProgramToGifts $(SEPOLIA_FORK_TEST_ARGS) 
-# CardsToProgramToGifts // LoyaltyProgramTest // LoyaltyGiftTest // DeployLoyaltyProgramTest
+# CardsToProgramToGifts // LoyaltyProgramTest // LoyaltyGiftTest // DeployMockLoyaltyProgramTest
 	
 sepoliaForkDeploy: 
 # @forge script script/DeployRegistry.s.sol:DeployRegistry $(SEPOLIA_FORK_ARGS)
 # @forge script script/ComputeRegistryAddress.s.sol:ComputeRegistryAddress $(SEPOLIA_FORK_ARGS)
-	@forge script script/DeployLoyaltyProgram.s.sol:DeployLoyaltyProgram $(SEPOLIA_FORK_ARGS)
+	@forge script script/DeployMockLoyaltyProgram.s.sol:DeployMockLoyaltyProgram $(SEPOLIA_FORK_ARGS)
 	@forge script script/DeployLoyaltyGifts.s.sol:DeployPointsForLoyaltyGiftsAndVouchers $(SEPOLIA_FORK_ARGS)
 
 anvilInitiate:
@@ -64,7 +64,7 @@ anvilInitiate:
 	@forge script script/ComputeRegistryAddress.s.sol:ComputeRegistryAddress $(ANVIL_ARGS_0)
 
 anvilDeployProgram:
-	@forge script script/DeployLoyaltyProgram.s.sol:DeployLoyaltyProgram $(ANVIL_ARGS_1)
+	@forge script script/DeployMockLoyaltyProgram.s.sol:DeployMockLoyaltyProgram $(ANVIL_ARGS_1)
 
 anvilDeployGifts:
 	@forge script script/DeployPointsForLoyaltyGiftsAndVouchers.s.sol:DeployPointsForLoyaltyGiftsAndVouchers $(ANVIL_ARGS_4)

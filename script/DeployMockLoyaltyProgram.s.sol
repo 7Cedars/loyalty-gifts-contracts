@@ -4,11 +4,11 @@ pragma solidity ^0.8.19;
 import {Script} from "forge-std/Script.sol";
 import {MockLoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
-import {PointsForLoyaltyGiftsAndVouchers} from "../src/PointsForLoyaltyGiftsAndVouchers.sol";
+
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
-contract DeployLoyaltyProgram is Script {
+contract DeployMockLoyaltyProgram is Script {
     MockLoyaltyProgram loyaltyProgram;
 
     // NB: If I need a helper config, see helperConfig.s.sol + learning/foundry-fund-me-f23

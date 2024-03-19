@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 import {Test, console} from "forge-std/Test.sol";
 import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.sol";
-import {DeployLoyaltyProgram} from "../../script/DeployLoyaltyProgram.s.sol";
+import {DeployMockLoyaltyProgram} from "../../script/DeployMockLoyaltyProgram.s.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 import {ERC6551Registry} from "../mocks/ERC6551Registry.sol";
 
@@ -40,7 +40,7 @@ contract LoyaltyProgramTest is Test {
     address vendorAddress = vm.addr(vendorKey);
 
     function setUp() external {
-        DeployLoyaltyProgram deployer = new DeployLoyaltyProgram();
+        DeployMockLoyaltyProgram deployer = new DeployMockLoyaltyProgram();
         (loyaltyProgram, helperConfig) = deployer.run();
     }
 
