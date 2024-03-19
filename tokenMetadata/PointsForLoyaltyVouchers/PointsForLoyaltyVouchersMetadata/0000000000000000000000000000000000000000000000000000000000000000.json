@@ -4,7 +4,7 @@
   "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmNTm2abX3z4WtjLuQk9ysbyM2hUwbWGrzbQn3h6m4DKWv",
   "attributes": [
     {
-    "trait_type": "is_token_voucher",
+    "trait_type": "is_voucher",
     "value": 1
     },
     {
@@ -17,18 +17,18 @@
     },
     {
       "trait_type": "vendor_message_at_claim",
-      "value": "No further action required. Points have been received and token sent."
+      "value": "No further action required. Points have been received and voucher sent."
     },
     {
       "trait_type": "customer_message_at_claim",
-      "value": "Your free coffee token has been send. You can use this to get a fere coffee at a later date."
+      "value": "Your free coffee voucher has been send. You can use this to get a fere coffee at a later date."
     },
     {
-      "trait_type": "vendor_message_at_token_redeem",
+      "trait_type": "vendor_message_at_voucher_redeem",
       "value": "Valid Token. Give free coffee to customer."
     },
     {
-      "trait_type": "customer_message_at_token_redeem",
+      "trait_type": "customer_message_at_voucher_redeem",
       "value": "Enjoy your coffee!"
     }
   ]

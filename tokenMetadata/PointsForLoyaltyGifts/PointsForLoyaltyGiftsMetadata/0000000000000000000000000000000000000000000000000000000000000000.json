@@ -1,15 +1,15 @@
 {
-  "title": "Party Access",
-  "description": "Entree to our blasting company party!",
-  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmafmDAzPrKnE5KUEpbEwVEc9HB8UqMPAPZnTC7o1rDu68",
+  "title": "One Free Coffee",
+  "description": "Get one free coffee on us!",
+  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmezGEMBShWGtYhJBneixZaW2Th7onBhUEUPVSZD4H7uvx",
   "attributes": [
     {
-      "trait_type": "is_token_voucher",
-      "value": 0
+    "trait_type": "is_voucher",
+    "value": 0
     },
     {
-      "trait_type": "Points",
-      "value": 50000
+      "trait_type": "points",
+      "value": 2500
     },
     {
       "trait_type": "additional_requirements",
@@ -17,11 +17,11 @@
     },
     {
       "trait_type": "vendor_message_at_claim",
-      "value": "Points have been received. Let customer in."
+      "value": "Points have been received. Give customer a coffee for free."
     },
     {
       "trait_type": "customer_message_at_claim",
-      "value": "Enjoy the party!"
+      "value": "Enjoy your coffee!"
     },
     {
       "trait_type": "vendor_message_at_token_redeem",

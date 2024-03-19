@@ -4,7 +4,7 @@
   "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmQyz1Dka9gmRkNPXzPTVNPy3dFt47xennS2JTF4s2viVb",
   "attributes": [
     {
-      "trait_type": "is_token_voucher",
+      "trait_type": "is_voucher",
       "value": 1
     },
     {
@@ -17,18 +17,18 @@
     },
     {
       "trait_type": "vendor_message_at_claim",
-      "value": "No further action required. Points have been received and token sent."
+      "value": "No further action required. Points have been received and voucher sent."
     },
     {
       "trait_type": "customer_message_at_claim",
-      "value": "Your party access token has been send. You can use this to access the party!"
+      "value": "Your party access voucher has been send. You can use this to access the party!"
     },
     {
-      "trait_type": "vendor_message_at_token_redeem",
+      "trait_type": "vendor_message_at_voucher_redeem",
       "value": "Valid Token. Let person in."
     },
     {
-      "trait_type": "customer_message_at_token_redeem",
+      "trait_type": "customer_message_at_voucher_redeem",
       "value": "Enjoy the Party!"
     }
   ]

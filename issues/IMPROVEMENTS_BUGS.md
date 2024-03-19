@@ -13,6 +13,13 @@ This repository is meant as initial playground to develop some examples of Loyal
 - [ ]  
 
 ## Examples to implement (in order of priority)
-- [ ]
+* **PointsForLoyaltyGifts.sol**: Simple exchange of points for immediate gift. 
+* **PointsForLoyaltyVouchers.sol**: Simple exchange of points for gift voucher.
+* **TieredAccess.sol**: provides 'gold', 'silver', 'bronze' vouchers for tiered access to gifts. 
+* **PointsForPseudoRaffle.sol**: a pseudo random allocation of gifts and vouchers. 
+* **PointsForRaffle.sol**: A randomised raffle, using Chainling VRF. 
+* **FreeGiftFriday.sol**: Gifts are only available on a certain day. 
+* **TransactionsForGifts.sol**: Gifts on the basis of number of transactions over the last 7 and 14 days.
+* **AuthorisedAllocation.sol**: Have an external party distribute gifts at will.
 
 
