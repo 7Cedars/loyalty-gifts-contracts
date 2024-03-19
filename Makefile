@@ -67,7 +67,7 @@ anvilDeployProgram:
 	@forge script script/DeployLoyaltyProgram.s.sol:DeployLoyaltyProgram $(ANVIL_ARGS_1)
 
 anvilDeployGifts:
-	@forge script script/DeployLoyaltyGifts.s.sol:DeployPointsForLoyaltyGiftsAndVouchers $(ANVIL_ARGS_4)
+	@forge script script/DeployPointsForLoyaltyGiftsAndVouchers.s.sol:DeployPointsForLoyaltyGiftsAndVouchers $(ANVIL_ARGS_4)
 
 anvilInteractions: 
 	@forge script script/Interactions.s.sol:Interactions $(ANVIL_ARGS_1)

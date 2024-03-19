@@ -21,7 +21,6 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 contract PointsForLoyaltyGiftsAndVouchers is LoyaltyGift {
     uint256[] public tokenised = [0, 0, 0, 1, 1, 1]; // 0 == false, 1 == true.
 
-    
     /**
      * @notice constructor function: initiating loyalty gift contract. 
      * 
