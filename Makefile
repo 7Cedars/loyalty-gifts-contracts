@@ -40,12 +40,15 @@ ANVIL_ARGS_2 := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KE
 ANVIL_ARGS_3 := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY_3) --broadcast
 ANVIL_ARGS_4 := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY_4) --broadcast
 
-SEPOLIA_FORK_ARGS := --fork-url $(SEPOLIA_RPC_URL) --broadcast --account dev_2 --sender ${DEV2_ADDRESS}
-SEPOLIA_FORK_TEST_ARGS := --fork-url $(SEPOLIA_RPC_URL) 
-
 ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
 	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 endif
+
+###############################
+# 			Sepolia testnet				#
+###############################
+SEPOLIA_FORK_ARGS := --fork-url $(SEPOLIA_RPC_URL) --broadcast --account dev_2 --sender ${DEV2_ADDRESS}
+SEPOLIA_FORK_TEST_ARGS := --fork-url $(SEPOLIA_RPC_URL) 
 
 sepoliaForkTest: 
 #	@forge test --match-test testCustomerCanClaimGift $(SEPOLIA_FORK_TEST_ARGS) -vvvv 
@@ -58,6 +61,37 @@ sepoliaForkDeploy:
 # @forge script script/ComputeRegistryAddress.s.sol:ComputeRegistryAddress $(SEPOLIA_FORK_ARGS)
 	@forge script script/DeployMockLoyaltyProgram.s.sol:DeployMockLoyaltyProgram $(SEPOLIA_FORK_ARGS)
 	@forge script script/DeployLoyaltyGifts.s.sol:DeployPointsForLoyaltyGiftsAndVouchers $(SEPOLIA_FORK_ARGS)
+
+
+# Very much WIP 
+###############################
+# 		OPSepolia testnet				#
+###############################
+OPT_SEPOLIA_FORK_ARGS := --fork-url $(OPT_SEPOLIA_RPC_URL) --broadcast --account dev_2 --sender ${DEV2_ADDRESS}
+OPT_SEPOLIA_FORK_TEST_ARGS := --fork-url $(OPT_SEPOLIA_RPC_URL) 
+OPT_SEPOLIA_ARGS := --rpc-url $(OPT_SEPOLIA_RPC_URL) --account dev_2 --sender ${DEV2_ADDRESS} --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+
+optSepoliaForkTest: 
+#	@forge test --match-test testCustomerCanClaimGift $(OPT_SEPOLIA_FORK_TEST_ARGS) -vvvv 
+# @forge test $(OPT_SEPOLIA_FORK_TEST_ARGS)  
+#	@forge test $(OPT_SEPOLIA_FORK_TEST_ARGS)
+# ignores invariant tests.
+	@forge test --match-test testMintingCardsCreatesValidTokenBasedAccounts $(OPT_SEPOLIA_FORK_TEST_ARGS) -vvvv 
+# CardsToProgramToGifts // LoyaltyProgramTest // LoyaltyGiftTest // DeployLoyaltyProgramTest
+	
+optSepoliaForkDeploy: 
+# @forge script script/DeployRegistry.s.sol:DeployRegistry $(OPT_SEPOLIA_FORK_ARGS)
+# @forge script script/ComputeRegistryAddress.s.sol:ComputeRegistryAddress $(OPT_SEPOLIA_FORK_ARGS)
+	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(OPT_SEPOLIA_FORK_ARGS)
+	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(OPT_SEPOLIA_FORK_ARGS)
+#	@forge script script/DeployLoyaltyGifts.s.sol:DeployMockLoyaltyGifts $(OPT_SEPOLIA_FORK_ARGS)
+
+optSepoliaDeploy:
+	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(OPT_SEPOLIA_ARGS)
+	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(OPT_SEPOLIA_ARGS)
+# @forge script script/DeployLoyaltyGifts.s.sol:DeployMockLoyaltyGifts $(OPT_SEPOLIA_ARGS)
+
+
 
 anvilInitiate:
 	@forge script script/DeployRegistry.s.sol:DeployRegistry $(ANVIL_ARGS_0)
