@@ -71,6 +71,14 @@ OPT_SEPOLIA_FORK_ARGS := --fork-url $(OPT_SEPOLIA_RPC_URL) --broadcast --account
 OPT_SEPOLIA_FORK_TEST_ARGS := --fork-url $(OPT_SEPOLIA_RPC_URL) 
 OPT_SEPOLIA_ARGS := --rpc-url $(OPT_SEPOLIA_RPC_URL) --account dev_2 --sender ${DEV2_ADDRESS} --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 
+
+testDeployRegistryOptSepolia:
+	@forge test $(OPT_SEPOLIA_FORK_TEST_ARGS)
+# @forge script script/DeployRegistry.s.sol $(OPT_SEPOLIA_FORK_TEST_ARGS)
+
+deployRegistryOptSepolia: 
+	@forge script script/DeployRegistry.s.sol $(OPT_SEPOLIA_ARGS)
+	
 optSepoliaForkTest: 
 #	@forge test --match-test testCustomerCanClaimGift $(OPT_SEPOLIA_FORK_TEST_ARGS) -vvvv 
 # @forge test $(OPT_SEPOLIA_FORK_TEST_ARGS)  
