@@ -12,7 +12,7 @@ contract DeployMockLoyaltyProgram is Script {
     MockLoyaltyProgram loyaltyProgram;
 
     // NB: If I need a helper config, see helperConfig.s.sol + learning/foundry-fund-me-f23
-    function run() external returns (MockLoyaltyProgram, HelperConfig) {
+ function run() external returns (MockLoyaltyProgram, HelperConfig) {
         HelperConfig helperConfig = new HelperConfig();
         string memory name = "Loyalty Program"; 
         string memory version = "1";
@@ -21,12 +21,12 @@ contract DeployMockLoyaltyProgram is Script {
             helperConfig.activeNetworkConfig();
 
         vm.startBroadcast();
-        loyaltyProgram = new MockLoyaltyProgram(
-        uri, 
-        name,
-        version,
-        erc65511Registry,
-        payable(erc65511Implementation)
+            loyaltyProgram = new MockLoyaltyProgram(
+            uri, 
+            name,
+            version,
+            erc65511Registry,
+            payable(erc65511Implementation)
         );
         vm.stopBroadcast();
 

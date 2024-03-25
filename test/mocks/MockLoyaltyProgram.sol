@@ -7,13 +7,12 @@ import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/Messa
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import {IERC6551Account} from "../../src/interfaces/IERC6551Account.sol";
 import {IERC1155Receiver} from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import {ILoyaltyGift} from "../../src/interfaces/ILoyaltyGift.sol";
 
 import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import {ERC6551Registry} from "../mocks/ERC6551Registry.sol";
+import {ERC6551Registry} from "./ERC6551Registry.sol";
 import {MockLoyaltyCard6551Account} from "./MockLoyaltyCard6551Account.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 
@@ -84,7 +83,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
 
     /* State variables */
     uint256 public constant LOYALTY_POINTS_ID = 0;
-    uint256 private constant SALT_TOKEN_BASED_ACCOUNT = 3947539732098357;
+    bytes32 private constant SALT_TOKEN_BASED_ACCOUNT = 0x05416460deb86d57af601be17e777b93592d9d4d4a4096c57876a91c84f4a712;
 
     // EIP712 domain separator
     struct EIP712Domain {
@@ -180,7 +179,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
      * @dev no limit to the amount of cards to mint - when to many are minted, gas limits kick in. 
      * @dev each address of Token Bound Account (TBA) is stored in s_LoyaltyCards.
      * @dev £security it should be (and I think is now) impossible to mint more than one loyaltyCard of the same Id. 
-     * This is crucial as the LoyaltyCard6551Account contract does not have a check for this - due to this contract being ERC-1155 based (instead of ERC-721). 
+     * This is crucial as the MockLoyaltyCard6551Account contract does not have a check for this - due to this contract being ERC-1155 based (instead of ERC-721). 
      * if more than one card of the same id are minted, you _will_ have a loyalty Card with multiple owners. 
      *
      * - emits a transferBatch event.
@@ -384,7 +383,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
         // Interact.
         // 3) retrieve loyalty points from customer
         _safeTransferFrom(loyaltyCardAddress, s_owner, 0, loyaltyPoints, "");
-        // and 4), if gift is tokenised: transfer voucher.
+        // and 4), if gift is tokenised, transfer voucher.
         if (LoyaltyGift(loyaltyGiftAddress).getTokenised()[loyaltyGiftId] == 1) {
             LoyaltyGift(loyaltyGiftAddress).issueLoyaltyVoucher(loyaltyCardAddress, loyaltyGiftId);
         }
@@ -515,7 +514,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
 
     function _createTokenBoundAccount(uint256 _loyaltyCardId) internal returns (address tokenBoundAccount) {
         tokenBoundAccount = s_erc6551Registry.createAccount(
-            address(s_erc6551Implementation), block.chainid, address(this), _loyaltyCardId, SALT_TOKEN_BASED_ACCOUNT, ""
+            address(s_erc6551Implementation), SALT_TOKEN_BASED_ACCOUNT, block.chainid, address(this), _loyaltyCardId
         );
 
         return tokenBoundAccount;
@@ -576,7 +575,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
 
     function getTokenBoundAddress(uint256 _loyaltyCardId) public view returns (address tokenBoundAccount) {
         tokenBoundAccount = s_erc6551Registry.account(
-            address(s_erc6551Implementation), block.chainid, address(this), _loyaltyCardId, SALT_TOKEN_BASED_ACCOUNT
+            address(s_erc6551Implementation), SALT_TOKEN_BASED_ACCOUNT, block.chainid, address(this), _loyaltyCardId 
         );
         return tokenBoundAccount;
     }
