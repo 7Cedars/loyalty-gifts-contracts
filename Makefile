@@ -88,6 +88,23 @@ arbSepoliaForkedDeploy:
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(ARB_SEPOLIA_FORKED_DEPLOY_ARGS)
 	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(ARB_SEPOLIA_FORKED_DEPLOY_ARGS)
 
+############################################## 
+#     Mumbai Sepolia testnet							 #
+##############################################
+MUMBAI_SEPOLIA_FORKED_TEST_ARGS := --fork-url $(MUMBAI_POLYGON_RPC_URL) 
+MUMBAI_SEPOLIA_FORKED_DEPLOY_ARGS := --fork-url $(MUMBAI_POLYGON_RPC_URL) --broadcast --account dev_2 --sender ${DEV2_ADDRESS} --verify --etherscan-api-key $(POLYGONSCAN_API_KEY)
+
+mumbaiForkTest: 
+	@forge test $(MUMBAI_SEPOLIA_FORKED_TEST_ARGS) 
+
+mumbaiForkedDeployTest: 
+	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(MUMBAI_SEPOLIA_FORKED_TEST_ARGS)
+	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(MUMBAI_SEPOLIA_FORKED_TEST_ARGS)
+	
+mumbaiForkedDeploy: 
+	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(MUMBAI_SEPOLIA_FORKED_DEPLOY_ARGS)
+	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(MUMBAI_SEPOLIA_FORKED_DEPLOY_ARGS)
+
 ##################################
 #     Local testnet							 #
 ##################################

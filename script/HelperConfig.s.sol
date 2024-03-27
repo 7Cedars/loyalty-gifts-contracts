@@ -41,9 +41,9 @@ contract HelperConfig is Script {
         if (block.chainid == 84532) { // should be base 
             activeNetworkConfig = getBaseSepoliaConfig(); // Polygon testnetwork / POS. See Blueberry and Cardona networks for ZkEvm.
         }
-        // if (block.chainid == 80001) { // should be base 
-        //     activeNetworkConfig = getMumbaiMaticConfig(); // Polygon testnetwork / POS. See Blueberry and Cardona networks for ZkEvm.
-        // }
+        if (block.chainid == 80001) { // should be base 
+            activeNetworkConfig = getMumbaiMaticConfig(); // Polygon testnetwork / POS. See Blueberry and Cardona networks for ZkEvm.
+        }
         else {
             activeNetworkConfig = getOrCreateAnvilEthConfig();
         }
@@ -130,13 +130,24 @@ contract HelperConfig is Script {
         return arbitrumSepoliaConfig;
     }
 
-    // function getMumbaiMaticConfig() public returns (NetworkConfig memory) {
+        function getMumbaiMaticConfig() public returns (NetworkConfig memory) {
+        vm.startBroadcast();
+        s_erc6551Implementation = new MockLoyaltyCard6551Account();
+        vm.stopBroadcast();
 
-    //     NetworkConfig memory mumbaiConfig = NetworkConfig({
-    //              FILL OUT LATER - TODO
-    //     });
-    //     return mumbaiConfig;
-    // }
+        NetworkConfig memory mumbaiPolygonConfig = NetworkConfig({
+            chainid: 80001,
+            uri: "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmac3tnopwY6LGfqsDivJwRwEmhMJrCWsx4453JbUyVUnD",
+            initialSupply: 1e25,
+            interval: 30,
+            erc6551Registry: 0x000000006551c19487814612e58FE06813775758, // = v0.3.1 
+            erc6551Implementation: payable(s_erc6551Implementation),
+            callbackGasLimit: 50000
+        });
+
+        console.logAddress(address(s_erc6551Implementation)); 
+        return mumbaiPolygonConfig;
+    }
 
     function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
         // NB: code for when i need to deploy mock addresses!
