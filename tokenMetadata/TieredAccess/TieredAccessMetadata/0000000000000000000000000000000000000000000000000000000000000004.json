@@ -1,0 +1,35 @@
+{
+  "title": "Fifteen percent off purchase.",
+  "description": "Get fifteen percent off your purchase!",
+  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmf96DFPmwcBHRoSasRHbbg7astAwTLan5mmo44coR4PkU",
+  "attributes": [
+    {
+    "trait_type": "is_voucher",
+    "value": 0
+    },
+    {
+      "trait_type": "points",
+      "value": 2500
+    },
+    {
+      "trait_type": "additional_requirements",
+      "value": "Loyalty Card has silver or gold token."
+    },
+    {
+      "trait_type": "vendor_message_at_claim",
+      "value": "Apply a fifteen percent deduction on purchase."
+    },
+    {
+      "trait_type": "customer_message_at_claim",
+      "value": "Success! Your vendor will apply a fifteen percent deduction."
+    },
+    {
+      "trait_type": "vendor_message_at_voucher_redeem",
+      "value": "N/A"
+    },
+    {
+      "trait_type": "customer_message_at_voucher_redeem",
+      "value": "N/A"
+    }
+  ]
+}

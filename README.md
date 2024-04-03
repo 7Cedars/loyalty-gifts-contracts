@@ -83,7 +83,7 @@ If you have not checked out the loyalty programs repository, please do so first.
 ### Example Gift Contracts 
 * **PointsForLoyaltyGifts.sol**: Simple exchange of points for immediate gift. 
 * **PointsForLoyaltyVouchers.sol**: Simple exchange of points for gift voucher.
-* **TieredAccess.sol**: provides 'gold', 'silver', 'bronze' vouchers for tiered access to gifts. *Coming soon.* 
+* **TieredAccess.sol**: provides 'gold', 'silver', 'bronze' vouchers for tiered access to gifts.
 * **PointsForPseudoRaffle.sol**: a pseudo random allocation of gifts and vouchers. *Coming soon.*
 * **PointsForRaffle.sol**: A randomised raffle, using Chainling VRF. *Coming soon.*
 * **FreeGiftFriday.sol**: Gifts are only available on a certain day. *Coming soon.*

@@ -30,7 +30,7 @@ contract TieredAccess is LoyaltyGift {
      */
     constructor()
         LoyaltyGift(
-            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmXS9s48RkDDDSqsyjBHN9HRSXpUud3FsBDVa1uZjXYMAH/{id}",
+            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmcvCDec3AeBeu1fd1yyLGQj2nCft9gkqNXge6R1gygjzL/{id}",
             tokenised
         )
     {}
@@ -70,7 +70,7 @@ contract TieredAccess is LoyaltyGift {
         // Tiered Gifts and Vouchers // 
         ///////////////////////////////
 
-        // loyalty gift 3: at least bronze token + 1500 points => 10% off purchase at the till. 
+        // loyalty gift 3: at least bronze token + 1500 points => 5% off purchase at the till. 
         if (loyaltyGiftId == 3) {
             if (loyaltyPoints < 1500) {
               revert ("insufficient points");
@@ -84,7 +84,7 @@ contract TieredAccess is LoyaltyGift {
             }
         }
 
-        // loyalty gift 4: at least silver token + 2500 points => 25% off purchase at the till. 
+        // loyalty gift 4: at least silver token + 2500 points => 15% off purchase at the till. 
         if (loyaltyGiftId == 4) {
             if (loyaltyPoints < 2500) {
               revert ("insufficient points");
