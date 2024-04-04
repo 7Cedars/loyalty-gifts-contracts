@@ -19,7 +19,26 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  */
 
 contract PointsForLoyaltyGifts is LoyaltyGift {
-    uint256[] public tokenised = [0, 0, 0]; // 0 == false, 1 == true.
+    Gift gift0 = Gift({
+        claimable: true, 
+        cost: 2500, 
+        additionalRequirements: false, 
+        voucher: false 
+        }); 
+    Gift gift1 = Gift({
+        claimable: true, 
+        cost: 4500, 
+        additionalRequirements: false, 
+        voucher: false 
+        }); 
+    Gift gift2 = Gift({
+        claimable: true, 
+        cost: 50000, 
+        additionalRequirements: false, 
+        voucher: false 
+        }); 
+
+    Gift[] public gifts = [gift0, gift1, gift2];  
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
@@ -30,7 +49,7 @@ contract PointsForLoyaltyGifts is LoyaltyGift {
     constructor()
         LoyaltyGift(
             "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmX24aGKazfEtBzDip4fS6Jb7MnXd9GbFw5oQ3ZqiRKb3t/{id}",
-            tokenised
+            gifts
         )
     {}
 
@@ -53,24 +72,21 @@ contract PointsForLoyaltyGifts is LoyaltyGift {
     {
         // loyalty gift 0: exchange 2500 points for gift. 
         if (loyaltyGiftId == 0) {
-            uint256 giftPriceInPoints = 2500;
-            if (loyaltyPoints < giftPriceInPoints) {
+            if (loyaltyPoints < gifts[0].cost) {
                 revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
             }
         }
 
         // loyalty gift 1: exchange 4500 points for gift. 
         if (loyaltyGiftId == 1) {
-            uint256 giftPriceInPoints = 4500;
-            if (loyaltyPoints < giftPriceInPoints) {
+            if (loyaltyPoints <  gifts[1].cost) {
                 revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
             }
         }
 
         // loyalty gift 2: exchange 50000 points for gift. 
         if (loyaltyGiftId == 2) {
-            uint256 giftPriceInPoints = 50000;
-            if (loyaltyPoints < giftPriceInPoints) {
+            if (loyaltyPoints <  gifts[2].cost) {
                 revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
             }
         }

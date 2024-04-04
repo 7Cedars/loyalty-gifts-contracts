@@ -18,40 +18,26 @@ import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
  * contracts to interact with one type of contract, instead of two.
  */
 contract LoyaltyGift is ERC1155, ILoyaltyGift {
-    // /* errors */
+    /* errors */
     error LoyaltyGift__NoTokensAvailable(address loyaltyToken);
-    error LoyaltyGift__NotTokenised(address loyaltyToken, uint256 loyaltyGiftId);
+    error LoyaltyGift__IsNotVoucher(address loyaltyToken, uint256 loyaltyGiftId);
     error LoyaltyGift__TransferDenied(address loyaltyToken);
 
-    /* State variables */
-    // NB! £todo: there needs to be a struct data type for loyaltyGifts: 
-    // something like: 
-    struct Gift {
-        bool voucher; // if it is a voucher or not (now tokenised)
-        bool claimable; // if it can be claimed by customer. There are many vouchers that can only be received - not claimed - or won.  
-        uint256 cost;  // cost in points. 
-    }
-    // then;
-    // note that this allows for easier workflow tih front end app + 
-    // does NOT need to give cost in uri. -- which is a big security gap at the moment. 
-    // it does imply quite some refactoring. 
-    // it will also cost more gas. 
-    Gift[] gifts; 
-    uint256[] private s_tokenised; // 0 == false, 1 == true.
-
+    /* types */
+    Gift[] s_gifts; 
 
     /* FUNCTIONS: */
     /**
      * @notice constructor function. 
      * 
      * @param loyaltyTokenUri URI of vouchers. Follows ERC 1155 standard.  
-     * @param tokenised array of 0 and 1's to indicate what gifts have vouchers (= token) and which ones do not. 
+     * @param gifts array of 0 and 1's to indicate what gifts have vouchers (= token) and which ones do not. 
      * 
      * emits a LoyaltyGiftDeployed event.  
      */
-    constructor(string memory loyaltyTokenUri, uint256[] memory tokenised) ERC1155(loyaltyTokenUri) {
-        s_tokenised = tokenised;
-        emit LoyaltyGiftDeployed(msg.sender, s_tokenised);
+    constructor(string memory loyaltyTokenUri, Gift[] memory gifts) ERC1155(loyaltyTokenUri) {
+        s_gifts = gifts;
+        emit LoyaltyGiftDeployed(msg.sender, s_gifts);
     }
 
     /**
@@ -66,11 +52,13 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
      * - loyaltyPoints: number of LoyaltyPoints sent. 
      *
      */
-    function requirementsLoyaltyGiftMet(address, /*loyaltyCard*/ uint256, /*loyaltyGiftId*/ uint256 /*loyaltyPoints*/ )
+    function requirementsLoyaltyGiftMet(address, /*loyaltyCard*/ uint256 loyaltyGiftId, uint256 /*loyaltyPoints*/ )
         public
         virtual
         returns (bool success)
     {
+        if (s_gifts[loyaltyGiftId].claimable == 0) revert ("Token is not claimable."); 
+        
         return true;
     }
 
@@ -89,8 +77,8 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
      */
     function mintLoyaltyVouchers(uint256[] memory loyaltyGiftIds, uint256[] memory numberOfVouchers) public {
         for (uint256 i; i < loyaltyGiftIds.length; ) {
-            if (s_tokenised[loyaltyGiftIds[i]] == 0) {
-                revert LoyaltyGift__NotTokenised(address(this), loyaltyGiftIds[i]);
+            if (s_gifts[loyaltyGiftIds[i]].voucher == 0) {
+                revert LoyaltyGift__IsNotVoucher(address(this), loyaltyGiftIds[i]);
             }
         unchecked { ++i; } 
         }
@@ -111,8 +99,8 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
     function issueLoyaltyVoucher(address loyaltyCard, uint256 loyaltyGiftId)
         public virtual
     {
-        if (s_tokenised[loyaltyGiftId] == 0) {
-            revert LoyaltyGift__NotTokenised(address(this), loyaltyGiftId);
+        if (s_gifts[loyaltyGiftId].voucher == 0) {
+            revert LoyaltyGift__IsNotVoucher(address(this), loyaltyGiftId);
         }
 
         if (balanceOf(msg.sender, loyaltyGiftId) == 0) {
@@ -133,8 +121,8 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
      * @dev also does not check if address is TBA / loyaltyCard -- see safeTransferFrom for this. 
      */
     function redeemLoyaltyVoucher(address loyaltyCard, uint256 loyaltyGiftId) public {
-        if (s_tokenised[loyaltyGiftId] == 0) {
-            revert LoyaltyGift__NotTokenised(address(this), loyaltyGiftId);
+        if (s_gifts[loyaltyGiftId].voucher == 0) {
+            revert LoyaltyGift__IsNotVoucher(address(this), loyaltyGiftId);
         }
 
         _safeTransferFrom(loyaltyCard, msg.sender, loyaltyGiftId, 1, "");
@@ -172,7 +160,11 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
     }
 
     /* getter functions */
-    function getTokenised() external view returns (uint256[] memory) {
-        return s_tokenised;
+    function getAmountGifts() external view returns (uint256) {
+        return s_gifts.length;
+    }
+
+    function getInfoGift(uint256 index) external view returns (Gift memory) {
+        return s_gifts[index];
     }
 }

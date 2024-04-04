@@ -18,8 +18,48 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  */
 
 contract TieredAccess is LoyaltyGift {
-    uint256[] public tokenised = [1, 1, 1, 0, 0, 1]; // 0 == false, 1 == true.
-    uint256[] public bronzeSilverGoldTiers = [0, 1, 2]; // 0 == bronze, 1 == silver, 2 = gold.
+
+    /* setting up Bronze, Silver and Gold tiers*/ 
+    Gift bronzeToken = Gift({
+        claimable: false, 
+        cost: 0, 
+        additionalRequirements: false, 
+        voucher: true 
+        }); 
+    Gift silverToken = Gift({
+        claimable: false, 
+        cost: 0, 
+        additionalRequirements: false, 
+        voucher: true 
+        }); 
+    Gift goldToken = Gift({
+        claimable: false, 
+        cost: 0, 
+        additionalRequirements: false, 
+        voucher: true 
+        });
+
+    /* setting up gifts*/ 
+    Gift gift0 = Gift({
+        claimable: true, 
+        cost: 1500, 
+        additionalRequirements: true, 
+        voucher: false 
+        }); 
+    Gift gift1 = Gift({
+        claimable: true, 
+        cost: 3000, 
+        additionalRequirements: true, 
+        voucher: false 
+        }); 
+    Gift gift2 = Gift({
+        claimable: true, 
+        cost: 5000, 
+        additionalRequirements: true, 
+        voucher: true 
+        }); 
+
+    Gift[] public gifts = [bronzeToken, silverToken, goldToken, gift0, gift1, gift2];  
     address[] public loyaltyCardAddresses; 
 
     /**
@@ -31,7 +71,7 @@ contract TieredAccess is LoyaltyGift {
     constructor()
         LoyaltyGift(
             "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmcvCDec3AeBeu1fd1yyLGQj2nCft9gkqNXge6R1gygjzL/{id}",
-            tokenised
+            gifts
         )
     {}
 
@@ -57,14 +97,9 @@ contract TieredAccess is LoyaltyGift {
         // Bronze, Silver, Gold token // 
         ////////////////////////////////
         
-        // loyalty giftIds 0, 1 and 2 are bronze, silver and gold token respectively. 
-        if (loyaltyGiftId == 0 || loyaltyGiftId == 1 || loyaltyGiftId == 2) {  
-          revert ("This token can only be transferred by vendor.");
-        }
-
-        // check balances of  ronze, silver and gold token 
+        // check balances of Bronze, silver and gold token 
         loyaltyCardAddresses = [loyaltyCard, loyaltyCard, loyaltyCard];
-        uint256[] memory balances = balanceOfBatch(loyaltyCardAddresses, bronzeSilverGoldTiers);
+        uint256[] memory balanceTokens = balanceOfBatch(loyaltyCardAddresses, [0, 1, 2]);
 
         /////////////////////////////// 
         // Tiered Gifts and Vouchers // 
@@ -72,13 +107,13 @@ contract TieredAccess is LoyaltyGift {
 
         // loyalty gift 3: at least bronze token + 1500 points => 5% off purchase at the till. 
         if (loyaltyGiftId == 3) {
-            if (loyaltyPoints < 1500) {
+            if (loyaltyPoints < gifts[3].costs) {
               revert ("insufficient points");
             }
             if (
-              balances[0] == 0 && 
-              balances[1] == 0 && 
-              balances[2] == 0
+              balanceTokens[0] == 0 && 
+              balanceTokens[1] == 0 && 
+              balanceTokens[2] == 0
               ) {
               revert ("No Bronze, Silver or Gold token on Card");
             }
@@ -86,12 +121,12 @@ contract TieredAccess is LoyaltyGift {
 
         // loyalty gift 4: at least silver token + 2500 points => 15% off purchase at the till. 
         if (loyaltyGiftId == 4) {
-            if (loyaltyPoints < 2500) {
+            if (loyaltyPoints < gifts[4].costs) {
               revert ("insufficient points");
             }
             if (
-              balances[1] == 0 && 
-              balances[2] == 0
+              balanceTokens[1] == 0 && 
+              balanceTokens[2] == 0
               ) {
               revert ("No Silver or Gold token on Card");
             }
@@ -99,13 +134,10 @@ contract TieredAccess is LoyaltyGift {
 
         // loyalty gift 5: at least golder token + 5000 points => voucher for access to private tour shop.  
         if (loyaltyGiftId == 5) {
-            if (loyaltyPoints < 5000) {
+            if (loyaltyPoints < gifts[5].costs) {
               revert ("insufficient points");
             }
-            if (
-              balances[1] == 0 && 
-              balances[2] == 0
-              ) {
+            if ( balanceTokens[2] == 0 ) {
               revert ("No Gold token on Card");
             }
         }
