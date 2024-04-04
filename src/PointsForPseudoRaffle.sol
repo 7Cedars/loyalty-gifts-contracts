@@ -18,12 +18,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  * @notice The contract is build as a single gift within a single contract, but that issues randomised vouchers when called. 
  * 
  * £todo: 
- * The logic of this contract should be as follows: 
- * gift 0 is claimable for 1250 points. 
- * When claimed, it sends a random vouchers of gift 1, 2 or 3. 
- * Meaning: gifts 1, 2, and 3 need to be minted. Their distribution (through the raffle) needs to be linked with how many have been minted of each. 
- * Meaning: gift 0 is not a voucher: it is just a gift type token. 
- * Meaning gifts 1, 2, and 3 are not claimable: customers cannot request these vouchers - they need to win them. 
+ * Upload images to pinata; create metadata files. 
  */
 
 /////////////////////////////////////////
@@ -31,8 +26,32 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 /////////////////////////////////////////
 
 contract PointsForPseudoRaffle is LoyaltyGift {
-    uint256[] public tokenised = [1]; // 0 == false, 1 == true.
-    error LoyaltyGift__InvalidTokenId(address loyaltyGift); 
+    Gift raffleGift = Gift({
+        claimable: true, 
+        cost: 1250, 
+        additionalRequirements: false, 
+        voucher: false 
+        }); 
+    Gift gift1 = Gift({
+        claimable: false, 
+        cost: 0, 
+        additionalRequirements: false, 
+        voucher: true 
+        }); 
+    Gift gift2 = Gift({
+        claimable: false, 
+        cost: 0, 
+        additionalRequirements: false, 
+        voucher: true 
+        }); 
+    Gift gift3 = Gift({
+        claimable: false, 
+        cost: 0, 
+        additionalRequirements: false, 
+        voucher: true 
+        }); 
+
+    Gift[] public gifts = [raffleGift, gift1, gift2, gift3];
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
@@ -42,8 +61,8 @@ contract PointsForPseudoRaffle is LoyaltyGift {
      */
     constructor()
         LoyaltyGift(
-            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmXS9s48RkDDDSqsyjBHN9HRSXpUud3FsBDVa1uZjXYMAH/{id}",
-            tokenised
+            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/<<URI>>/{id}",
+            gifts
         )
     {}
 
@@ -77,28 +96,41 @@ contract PointsForPseudoRaffle is LoyaltyGift {
     function issueLoyaltyVoucher(address loyaltyCard, uint256 loyaltyGiftId)
     public 
     override 
-    {
-        if (loyaltyGiftId != 0) {
-            revert LoyaltyGift__InvalidTokenId(address(this));
+    {   
+        uint256[] memory balanceVouchers = balanceOfBatch(
+            [msg.sender, msg.sender, msg.sender], 
+            [1, 2, 3]
+            );
+
+        if (balanceVouchers[1] + balanceVouchers[2] + balanceVouchers[3] == 0) {
+            revert LoyaltyGift__NoVouchersAvailable(address(this));
         }
         
-        if (balanceOf(msg.sender, loyaltyGiftId) == 0) {
-            revert LoyaltyGift__NoTokensAvailable(address(this));
-        }
+        // @dev: selection of loyalty gift Id subject to availabilty vouchers. 
+        uint256 newLoyaltyGiftId = pseudoRandomNumber(
+            balanceVouchers[1], 
+            balanceVouchers[2], 
+            balanceVouchers[3]
+            ); 
 
-        uint newLoyaltyGiftId = pseudoRandomNumber(3); 
-
-        // problem is: these also have to be minted! 
         safeTransferFrom(msg.sender, loyaltyCard, newLoyaltyGiftId, 1, "");
     }
 
-    function pseudoRandomNumber(uint256 maxRange) private view returns (uint256) {
-        return uint256(
+    function pseudoRandomNumber(uint256 numberVouchers1, uint256 numberVouchers2, uint256 numberVouchers3) private view returns (uint256) {
+        uint256 totalVouchers = numberVouchers1 + numberVouchers2 + numberVouchers3; 
+
+        uint256 randomNumber = uint256(
             keccak256(abi.encodePacked(
                 block.timestamp, 
                 msg.sender, 
                 blockhash(block.number)
                 ))
-            ) % maxRange; 
+            ) % totalVouchers; 
+
+        // test how / if this works when one or more vouchers has not been minted.. 
+        if (randomNumber < numberVouchers1) return 1;
+        if (randomNumber >= numberVouchers1 && randomNumber < (numberVouchers1 + numberVouchers2)) return 2;  
+        if (randomNumber >= (numberVouchers1 + numberVouchers2) ) return 3;  
+
     }
 }

@@ -103,7 +103,7 @@ contract PointsForLoyaltyVouchersTest is Test {
 
     function testIssueVoucherRevertsForNonAvailableTokenisedGift() public {
         vm.expectRevert(
-            abi.encodeWithSelector(LoyaltyGift.LoyaltyGift__NoTokensAvailable.selector, address(loyaltyGift))
+            abi.encodeWithSelector(LoyaltyGift.LoyaltyGift__NoVouchersAvailable.selector, address(loyaltyGift))
         );
         loyaltyGift.issueLoyaltyVoucher(addressOne, 1);
     }

@@ -84,7 +84,7 @@ If you have not checked out the loyalty programs repository, please do so first.
 * **PointsForLoyaltyGifts.sol**: Simple exchange of points for immediate gift. 
 * **PointsForLoyaltyVouchers.sol**: Simple exchange of points for gift voucher.
 * **TieredAccess.sol**: provides 'gold', 'silver', 'bronze' vouchers for tiered access to gifts.
-* **PointsForPseudoRaffle.sol**: a pseudo random allocation of gifts and vouchers. *Coming soon.*
+* **PointsForPseudoRaffle.sol**: a pseudo random allocation of gifts and vouchers. *Work in Progress.*
 * **PointsForRaffle.sol**: A randomised raffle, using Chainling VRF. *Coming soon.*
 * **FreeGiftFriday.sol**: Gifts are only available on a certain day. *Coming soon.*
 * **TransactionsForGifts.sol**: Gifts on the basis of number of transactions over the last 7 and 14 days. *Coming soon.*
@@ -97,6 +97,7 @@ If you have not checked out the loyalty programs repository, please do so first.
 * Foundry 0.2.0
 * OpenZeppelin 5.0
 * Chainlink 
+* www.svgrepo.com
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -197,18 +198,15 @@ GitHub profile [https://github.com/7Cedars](https://github.com/7Cedars)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 * This project was build while following [PatrickCollins](https://www.youtube.com/watch?v=wUjYK5gwNZs&t) amazing Learn Solidity, Blockchain Development, & Smart Contracts Youtube course. Comes highly recommended for anyone wanting to get into Foundry & intermediate/advanced solidity coding. 
 * I took the template for the readme file from [Drew Othneil](https://github.com/othneildrew/Best-README-Template/blob/master/README.md?plain=1). 
+* All the images for the gifts and vouchers were created with help from www.svgrepo.com. A fantastic repo with CC licensed art work. Specific links are included in all the images.   
 * And a special thanks should go out to [SpeedRunEthereum](https://speedrunethereum.com/) and [LearnWeb3](https://learnweb3.io/) for providing the first introductions to solidity coding. 
 * And the deploy scripts use Etherscan.io APIs.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->

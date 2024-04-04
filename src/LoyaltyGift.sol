@@ -19,7 +19,7 @@ import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
  */
 contract LoyaltyGift is ERC1155, ILoyaltyGift {
     /* errors */
-    error LoyaltyGift__NoTokensAvailable(address loyaltyToken);
+    error LoyaltyGift__NoVouchersAvailable(address loyaltyToken);
     error LoyaltyGift__IsNotVoucher(address loyaltyToken, uint256 loyaltyGiftId);
     error LoyaltyGift__TransferDenied(address loyaltyToken);
 
@@ -58,7 +58,7 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
         returns (bool success)
     {
         if (s_gifts[loyaltyGiftId].claimable == 0) revert ("Token is not claimable."); 
-        
+
         return true;
     }
 
@@ -104,7 +104,7 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
         }
 
         if (balanceOf(msg.sender, loyaltyGiftId) == 0) {
-            revert LoyaltyGift__NoTokensAvailable(address(this));
+            revert LoyaltyGift__NoVouchersAvailable(address(this));
         }
 
         safeTransferFrom(msg.sender, loyaltyCard, loyaltyGiftId, 1, "");
