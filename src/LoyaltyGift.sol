@@ -24,6 +24,19 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
     error LoyaltyGift__TransferDenied(address loyaltyToken);
 
     /* State variables */
+    // NB! £todo: there needs to be a struct data type for loyaltyGifts: 
+    // something like: 
+    struct Gift {
+        bool voucher; // if it is a voucher or not (now tokenised)
+        bool claimable; // if it can be claimed by customer. There are many vouchers that can only be received - not claimed - or won.  
+        uint256 cost;  // cost in points. 
+    }
+    // then;
+    // note that this allows for easier workflow tih front end app + 
+    // does NOT need to give cost in uri. -- which is a big security gap at the moment. 
+    // it does imply quite some refactoring. 
+    // it will also cost more gas. 
+    Gift[] gifts; 
     uint256[] private s_tokenised; // 0 == false, 1 == true.
 
 
@@ -96,7 +109,7 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
      *
      */
     function issueLoyaltyVoucher(address loyaltyCard, uint256 loyaltyGiftId)
-        public
+        public virtual
     {
         if (s_tokenised[loyaltyGiftId] == 0) {
             revert LoyaltyGift__NotTokenised(address(this), loyaltyGiftId);

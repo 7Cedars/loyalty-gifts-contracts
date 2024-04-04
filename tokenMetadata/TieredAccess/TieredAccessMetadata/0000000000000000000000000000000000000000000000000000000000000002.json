@@ -1,6 +1,6 @@
 {
   "title": "Gold Token",
-  "description": "Access to the bronze, silver and gold tier of gifts and tokens",
+  "description": "Access to the bronze, silver and gold tier of gifts and tokens. A customer cannot request this token: it needs to be transferred by vendor.",
   "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmSxuceEbhmfDcyArMD9LLvib2eeqJsLccLRn3gFwBZMGr",
   "attributes": [
     {
