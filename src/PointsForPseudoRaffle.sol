@@ -26,43 +26,30 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 /////////////////////////////////////////
 
 contract PointsForPseudoRaffle is LoyaltyGift {
-    Gift raffleGift = Gift({
-        claimable: true, 
-        cost: 1250, 
-        additionalRequirements: false, 
-        voucher: false 
-        }); 
-    Gift gift1 = Gift({
-        claimable: false, 
-        cost: 0, 
-        additionalRequirements: false, 
-        voucher: true 
-        }); 
-    Gift gift2 = Gift({
-        claimable: false, 
-        cost: 0, 
-        additionalRequirements: false, 
-        voucher: true 
-        }); 
-    Gift gift3 = Gift({
-        claimable: false, 
-        cost: 0, 
-        additionalRequirements: false, 
-        voucher: true 
-        }); 
 
-    Gift[] public gifts = [raffleGift, gift1, gift2, gift3];
+    /* Each gift contract is setup with four equal sized arrays providing info on gifts per index: 
+    @param isClaimable => can gift directly be claimed by customer?
+    @param isVoucher => is the gift a voucher (to be redeemed later) or has to be immediatly redeemed at the till? 
+    @param cost =>  What is cost (in points) of voucher? 
+    @param hasAdditionalRequirements =>  Are their additional requirements? 
+    */
+    uint256[] isClaimable = [1, 0, 0, 0]; 
+    uint256[] isVoucher = [0, 1, 1, 1]; 
+    uint256[] cost = [1250, 0, 0, 0];
+    uint256[] hasAdditionalRequirements = [0, 0, 0, 0];
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
      * 
      * @dev the LoyaltyGift constructor takes to params: uri and tokenised (array denoting which gifts are - tokenised - vouchers.)
-     * £todo URI STILL NEEDS TO BE CHANGED! 
      */
     constructor()
         LoyaltyGift(
             "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmYwka9JjzUCtFiF2PkMhAyfnL8cJSwjPL1fiszR21xfV5/{id}",
-            gifts
+            isClaimable,
+            isVoucher,
+            cost,
+            hasAdditionalRequirements 
         )
     {}
 
@@ -83,7 +70,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
         returns (bool success)
     {
         if (loyaltyGiftId != 0) revert ("Invalid token");
-        if (loyaltyPoints < raffleGift.cost) revert ("Not enough points.");
+        if (loyaltyPoints < cost[0]) revert ("Not enough points.");
         
         bool check = super.requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, loyaltyPoints);
         return check;

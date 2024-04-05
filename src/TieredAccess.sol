@@ -19,47 +19,17 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 contract TieredAccess is LoyaltyGift {
 
-    /* setting up Bronze, Silver and Gold tiers*/ 
-    Gift bronzeToken = Gift({
-        claimable: false, 
-        cost: 0, 
-        additionalRequirements: false, 
-        voucher: true 
-        }); 
-    Gift silverToken = Gift({
-        claimable: false, 
-        cost: 0, 
-        additionalRequirements: false, 
-        voucher: true 
-        }); 
-    Gift goldToken = Gift({
-        claimable: false, 
-        cost: 0, 
-        additionalRequirements: false, 
-        voucher: true 
-        });
+    /* Each gift contract is setup with four equal sized arrays providing info on gifts per index: 
+    @param isClaimable => can gift directly be claimed by customer?
+    @param isVoucher => is the gift a voucher (to be redeemed later) or has to be immediatly redeemed at the till? 
+    @param cost =>  What is cost (in points) of voucher? 
+    @param hasAdditionalRequirements =>  Are their additional requirements? 
+    */
+    uint256[] isClaimable = [0, 0, 0, 1, 1, 1]; 
+    uint256[] isVoucher = [1, 1, 1, 0, 0, 1]; 
+    uint256[] cost = [0, 0, 0, 1500, 3000, 5000];
+    uint256[] hasAdditionalRequirements = [0, 0, 0, 1, 1, 1];
 
-    /* setting up gifts*/ 
-    Gift gift0 = Gift({
-        claimable: true, 
-        cost: 1500, 
-        additionalRequirements: true, 
-        voucher: false 
-        }); 
-    Gift gift1 = Gift({
-        claimable: true, 
-        cost: 3000, 
-        additionalRequirements: true, 
-        voucher: false 
-        }); 
-    Gift gift2 = Gift({
-        claimable: true, 
-        cost: 5000, 
-        additionalRequirements: true, 
-        voucher: true 
-        }); 
-
-    Gift[] public gifts = [bronzeToken, silverToken, goldToken, gift0, gift1, gift2];  
     address[] public loyaltyCardAddresses; 
 
     /**
@@ -71,7 +41,10 @@ contract TieredAccess is LoyaltyGift {
     constructor()
         LoyaltyGift(
             "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmVGdaVoRSn9fJ4in6ghKaZv4QF9hKur6BD9J2QvSsGwVd/{id}",
-            gifts
+            isClaimable,
+            isVoucher,
+            cost,
+            hasAdditionalRequirements 
         )
     {}
 
@@ -107,7 +80,7 @@ contract TieredAccess is LoyaltyGift {
 
         // loyalty gift 3: at least bronze token + 1500 points => 5% off purchase at the till. 
         if (loyaltyGiftId == 3) {
-            if (loyaltyPoints < gifts[3].costs) {
+            if (loyaltyPoints < cost[3]) {
               revert ("Not enough points.");
             }
             if (
@@ -121,7 +94,7 @@ contract TieredAccess is LoyaltyGift {
 
         // loyalty gift 4: at least silver token + 2500 points => 15% off purchase at the till. 
         if (loyaltyGiftId == 4) {
-            if (loyaltyPoints < gifts[4].costs) {
+            if (loyaltyPoints < cost[4]) {
               revert ("Not enough points.");
             }
             if (
@@ -134,7 +107,7 @@ contract TieredAccess is LoyaltyGift {
 
         // loyalty gift 5: at least golder token + 5000 points => voucher for access to private tour shop.  
         if (loyaltyGiftId == 5) {
-            if (loyaltyPoints < gifts[5].costs) {
+            if (loyaltyPoints < cost[5]) {
               revert ("Not enough points.");
             }
             if ( balanceTokens[2] == 0 ) {

@@ -27,26 +27,32 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  */
 
 contract FridaysFifteenPercent is LoyaltyGift {
-    Gift gift0 = Gift({
-        claimable: true, 
-        cost: 2500, 
-        additionalRequirements: false, 
-        voucher: false 
-        });
 
-    Gift[] public gifts = [gift0];  
+    /* Each gift contract is setup with four equal sized arrays providing info on gifts per index: 
+    @param isClaimable => can gift directly be claimed by customer?
+    @param isVoucher => is the gift a voucher (to be redeemed later) or has to be immediatly redeemed at the till? 
+    @param cost =>  What is cost (in points) of voucher? 
+    @param hasAdditionalRequirements =>  Are their additional requirements? 
+    */
+    uint256[] isClaimable = [1]; 
+    uint256[] isVoucher = [1]; 
+    uint256[] cost = [2500];
+    uint256[] hasAdditionalRequirements = [0];   
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
      * 
-     * @dev the LoyaltyGift constructor takes to params: uri and tokenised (array denoting which gifts are - tokenised - vouchers.)
-     *  £todo URI STILL NEEDS TO BE CHANGED! 
+     * @dev the LoyaltyGift constructor takes five params:  
+     * uri and tokenised (array denoting which gifts are - tokenised - vouchers.)
      */
     constructor()
         LoyaltyGift(
             "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmbAP16C41R1YrcayVWAZ2qyRDiRNzohYkN8cFc4AZGcRC/{id}",
-            gifts
-        )
+            isClaimable,
+            isVoucher,
+            cost,
+            hasAdditionalRequirements            
+            )
     {}
 
     /**
@@ -70,7 +76,7 @@ contract FridaysFifteenPercent is LoyaltyGift {
             revert("It's not Friday!");
         }
 
-        if (loyaltyPoints < gifts[0].cost) {
+        if (loyaltyPoints < cost[0]) {
             revert("Not enough points.");
         }
 
