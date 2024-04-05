@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
-   sodipodi:docname="LoyaltyGift1_GoldToken.svg"
+   sodipodi:docname="LoyaltyGift2_GoldToken.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,11 +25,11 @@
      showgrid="false"
      units="px"
      width="300px"
-     inkscape:zoom="0.66368545"
-     inkscape:cx="54.242563"
-     inkscape:cy="418.11976"
-     inkscape:window-width="2560"
-     inkscape:window-height="1376"
+     inkscape:zoom="1.3273709"
+     inkscape:cx="233.54437"
+     inkscape:cy="363.8772"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -155,5 +155,16 @@
            style="fill:none;stroke-width:2.32497;stroke-miterlimit:4;stroke-dasharray:none" />
       </g>
     </g>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:Sarai;-inkscape-font-specification:Sarai;text-decoration-color:#000000;fill:#e4b43e;fill-opacity:1;stroke:none;stroke-width:3.38331;stop-color:#000000"
+       x="21.822811"
+       y="126.81454"
+       id="text3815-3"><tspan
+         sodipodi:role="line"
+         id="tspan3813-7"
+         style="font-size:4.23333px;fill:#e4b43e;fill-opacity:1;stroke:none;stroke-width:3.38331"
+         x="21.822811"
+         y="126.81454">Image adapted from: https://www.svgrepo.com/svg/505354/crown-2</tspan></text>
   </g>
 </svg>

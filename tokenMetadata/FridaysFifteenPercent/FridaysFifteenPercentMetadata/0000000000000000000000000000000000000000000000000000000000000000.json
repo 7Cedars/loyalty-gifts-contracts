@@ -1,7 +1,7 @@
 {
-  "title": "Bronze Token",
-  "description": "Access to the bronze tier of gifts and tokens. A customer cannot request this token: it needs to be transferred by vendor.",
-  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmU2cEJqkBuMCvzzJGbSupfSTgSBCy1qAnGhiETPPNaFRC",
+  "title": "Fridays Fifteen!",
+  "description": "Get fifteen percent off any item for 2500 points. Only on Fridays.",
+  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmPSeMJEXyrRXzutgKNE8XyDRcuskTRocWUSNC8w1vDy62",
   "attributes": [
     {
       "trait_type": "additional_requirements",

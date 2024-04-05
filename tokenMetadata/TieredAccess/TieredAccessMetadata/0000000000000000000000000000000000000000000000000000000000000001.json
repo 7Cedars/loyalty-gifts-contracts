@@ -1,35 +1,27 @@
 {
   "title": "Silver Token",
   "description": "Access to the bronze and silver tier of gifts and tokens. A customer cannot request this token: it needs to be transferred by vendor.",
-  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmTE7NYaR6owZaxzHV5vtysiUXB3RSVQK9oQJJcLJDxKsa",
+  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmQnUaMtCkk1AbtobsHSB33UWc38oTyfi7LBygBX2vnCXG",
   "attributes": [
-    {
-    "trait_type": "is_voucher",
-    "value": 1
-    },
-    {
-      "trait_type": "points",
-      "value": 999999999999
-    },
     {
       "trait_type": "additional_requirements",
       "value": "none"
     },
     {
       "trait_type": "vendor_message_at_claim",
-      "value": "N/A"
+      "value": "none"
     },
     {
       "trait_type": "customer_message_at_claim",
-      "value": "N/A"
+      "value": "none"
     },
     {
       "trait_type": "vendor_message_at_voucher_redeem",
-      "value": "N/A"
+      "value": "none"
     },
     {
       "trait_type": "customer_message_at_voucher_redeem",
-      "value": "N/A"
+      "value": "none"
     }
   ]
 }

@@ -26,7 +26,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  * 
  */
 
-contract FreeGiftFriday is LoyaltyGift {
+contract FridaysFifteenPercent is LoyaltyGift {
     Gift gift0 = Gift({
         claimable: true, 
         cost: 2500, 
@@ -44,7 +44,7 @@ contract FreeGiftFriday is LoyaltyGift {
      */
     constructor()
         LoyaltyGift(
-            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmX24aGKazfEtBzDip4fS6Jb7MnXd9GbFw5oQ3ZqiRKb3t/{id}",
+            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmbAP16C41R1YrcayVWAZ2qyRDiRNzohYkN8cFc4AZGcRC/{id}",
             gifts
         )
     {}

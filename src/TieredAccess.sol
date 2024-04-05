@@ -70,7 +70,7 @@ contract TieredAccess is LoyaltyGift {
      */
     constructor()
         LoyaltyGift(
-            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmcvCDec3AeBeu1fd1yyLGQj2nCft9gkqNXge6R1gygjzL/{id}",
+            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmVGdaVoRSn9fJ4in6ghKaZv4QF9hKur6BD9J2QvSsGwVd/{id}",
             gifts
         )
     {}

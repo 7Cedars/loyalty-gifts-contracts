@@ -1,16 +1,8 @@
 {
   "title": "Five percent off purchase.",
   "description": "Get five percent off your purchase!",
-  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmNTwBgYsKXG9DzM4Ev9tEUaLY26oVBc1rfSN8E3tYyS6u",
+  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmYvZzmMizQtBmGUkyaeehFeGHEihXzWXgCBVpBDoLVP3L",
   "attributes": [
-    {
-    "trait_type": "is_voucher",
-    "value": 0
-    },
-    {
-      "trait_type": "points",
-      "value": 1500
-    },
     {
       "trait_type": "additional_requirements",
       "value": "Loyalty Card has has bronze, silver or gold token."
@@ -25,11 +17,11 @@
     },
     {
       "trait_type": "vendor_message_at_voucher_redeem",
-      "value": "N/A"
+      "value": "none"
     },
     {
       "trait_type": "customer_message_at_voucher_redeem",
-      "value": "N/A"
+      "value": "none"
     }
   ]
 }

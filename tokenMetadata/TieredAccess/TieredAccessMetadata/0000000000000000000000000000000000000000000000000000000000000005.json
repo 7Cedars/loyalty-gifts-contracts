@@ -1,16 +1,8 @@
 {
   "title": "Free tour",
   "description": "Access to a free tour to one of our shops!",
-  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmc7TJ2ZWHdw51tXjDAq9NALsoiB5Q6BK93MfB1GoguSio",
+  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmNmDjHBSeHw7aqiJgvu459qQJYrftkWVPW4UQwc7z9Ccw",
   "attributes": [
-    {
-      "trait_type": "is_voucher",
-      "value": 1
-    },
-    {
-      "trait_type": "Points",
-      "value": 50000
-    },
     {
       "trait_type": "additional_requirements",
       "value": "none"

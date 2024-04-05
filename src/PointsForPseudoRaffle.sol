@@ -61,7 +61,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
      */
     constructor()
         LoyaltyGift(
-            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/<<URI>>/{id}",
+            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmYwka9JjzUCtFiF2PkMhAyfnL8cJSwjPL1fiszR21xfV5/{id}",
             gifts
         )
     {}

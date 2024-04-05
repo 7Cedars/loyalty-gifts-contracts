@@ -1,35 +1,27 @@
 {
   "title": "Gold Token",
   "description": "Access to the bronze, silver and gold tier of gifts and tokens. A customer cannot request this token: it needs to be transferred by vendor.",
-  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmSxuceEbhmfDcyArMD9LLvib2eeqJsLccLRn3gFwBZMGr",
+  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmQwwwSACaEToNLpuCTx8txJAgQHBcQitkxVHr7uE5T6hm",
   "attributes": [
-    {
-    "trait_type": "is_voucher",
-    "value": 1
-    },
-    {
-      "trait_type": "points",
-      "value": 999999999999
-    },
     {
       "trait_type": "additional_requirements",
       "value": "none"
     },
     {
       "trait_type": "vendor_message_at_claim",
-      "value": "N/A"
+      "value": "none"
     },
     {
       "trait_type": "customer_message_at_claim",
-      "value": "N/A"
+      "value": "none"
     },
     {
       "trait_type": "vendor_message_at_voucher_redeem",
-      "value": "N/A"
+      "value": "none"
     },
     {
       "trait_type": "customer_message_at_voucher_redeem",
-      "value": "N/A"
+      "value": "none"
     }
   ]
 }

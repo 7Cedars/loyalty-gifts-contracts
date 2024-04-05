@@ -25,11 +25,11 @@
      showgrid="false"
      units="px"
      width="300px"
-     inkscape:zoom="1.3273709"
-     inkscape:cx="85.13069"
-     inkscape:cy="250.49517"
-     inkscape:window-width="2560"
-     inkscape:window-height="1376"
+     inkscape:zoom="0.66368545"
+     inkscape:cx="304.36105"
+     inkscape:cy="114.51208"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -121,5 +121,16 @@
            style="fill:none;stroke-width:2.32497;stroke-miterlimit:4;stroke-dasharray:none" />
       </g>
     </g>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:Sarai;-inkscape-font-specification:Sarai;text-decoration-color:#000000;fill:#989898;fill-opacity:1;stroke:none;stroke-width:3.38331;stop-color:#000000"
+       x="19.236399"
+       y="122.96967"
+       id="text3815-3"><tspan
+         sodipodi:role="line"
+         id="tspan3813-7"
+         style="font-size:4.23333px;fill:#989898;fill-opacity:1;stroke:none;stroke-width:3.38331"
+         x="19.236399"
+         y="122.96967">Image adapted from: https://www.svgrepo.com/svg/505354/crown-2</tspan></text>
   </g>
 </svg>
