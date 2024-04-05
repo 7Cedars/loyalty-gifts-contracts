@@ -31,6 +31,7 @@ contract TieredAccess is LoyaltyGift {
     uint256[] hasAdditionalRequirements = [0, 0, 0, 1, 1, 1];
 
     address[] public loyaltyCardAddresses; 
+    uint256[] public giftIndices; 
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
@@ -72,7 +73,8 @@ contract TieredAccess is LoyaltyGift {
         
         // check balances of Bronze, silver and gold token 
         loyaltyCardAddresses = [loyaltyCard, loyaltyCard, loyaltyCard];
-        uint256[] memory balanceTokens = balanceOfBatch(loyaltyCardAddresses, [0, 1, 2]);
+        giftIndices = [0, 1, 2]; 
+        uint256[] memory balanceTokens = balanceOfBatch(loyaltyCardAddresses, giftIndices);
 
         /////////////////////////////// 
         // Tiered Gifts and Vouchers // 

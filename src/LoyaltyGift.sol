@@ -176,22 +176,23 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
     }
 
     /* getter functions */
-    function getAmountGifts() external view returns (uint256) {
+    function getNumberOfGifts() external view returns (uint256) {
         return s_isClaimable.length;
     }
 
-    function getInfoGift(uint256 index) external view returns (
-        uint256 isClaimable, 
-        uint256 isVoucher, 
-        uint256 cost, 
-        uint256 hasAdditionalRequirements
-        ) {
+    function getIsClaimable(uint256 index) external view returns (uint256) {
+        return s_isClaimable[index];
+    } 
 
-        return (
-            s_isClaimable[index], 
-            s_isVoucher[index], 
-            s_cost[index], 
-            s_hasAdditionalRequirements[index]
-            ); 
+    function getIsVoucher(uint256 index) external view returns (uint256) {
+        return s_isVoucher[index]; 
+    }
+
+    function getCost(uint256 index) external view returns (uint256) {
+        return s_cost[index];
+    }
+
+    function getHasAdditionalRequirements(uint256 index) external view returns (uint256) {
+        return s_hasAdditionalRequirements[index]; 
     }
 }

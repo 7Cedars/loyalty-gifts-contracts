@@ -17,13 +17,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  * 
  * @notice The contract is build as a single gift within a single contract, but that issues randomised vouchers when called. 
  * 
- * £todo: 
- * Upload images to pinata; create metadata files. 
  */
-
-/////////////////////////////////////////
-// EVERYTHIN BELOW IS STILL WIP / OLD! //
-/////////////////////////////////////////
 
 contract PointsForPseudoRaffle is LoyaltyGift {
 
@@ -37,6 +31,15 @@ contract PointsForPseudoRaffle is LoyaltyGift {
     uint256[] isVoucher = [0, 1, 1, 1]; 
     uint256[] cost = [1250, 0, 0, 0];
     uint256[] hasAdditionalRequirements = [0, 0, 0, 0];
+
+    address[] public msgAddressess; 
+    uint256[] public giftIndices; 
+
+    // uint256[] public balanceVouchers = balanceOfBatch(
+    //         [msg.sender, msg.sender, msg.sender], 
+    //         [1, 2, 3]
+    //         );
+
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
@@ -80,13 +83,16 @@ contract PointsForPseudoRaffle is LoyaltyGift {
      * @notice issues random voucher, overrides standard function in LoyaltyGift contract. 
      * 
      */
-    function issueLoyaltyVoucher(address loyaltyCard, uint256 loyaltyGiftId)
+    function issueLoyaltyVoucher(address loyaltyCard, uint256 /* loyaltyGiftId */)
     public 
     override 
     {   
+        msgAddressess = [msg.sender, msg.sender, msg.sender]; 
+        giftIndices = [1, 2, 3]; 
+
         uint256[] memory balanceVouchers = balanceOfBatch(
-            [msg.sender, msg.sender, msg.sender], 
-            [1, 2, 3]
+            msgAddressess, 
+            giftIndices
             );
 
         if (balanceVouchers[1] + balanceVouchers[2] + balanceVouchers[3] == 0) {

@@ -22,7 +22,7 @@ contract PointsForLoyaltyVouchersTest is Test {
     event TransferBatch(
         address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values
     );
-    event LoyaltyGiftDeployed(address indexed issuer, uint256[] tokenised);
+    event LoyaltyGiftDeployed(address indexed issuer);
 
     uint256 keyZero = vm.envUint("DEFAULT_ANVIL_KEY_0");
     address addressZero = vm.addr(keyZero);
@@ -32,6 +32,12 @@ contract PointsForLoyaltyVouchersTest is Test {
     string GIFT_URI =
         "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmSshfobzx5jtA14xd7zJ1PtmG8xFaPkAq2DZQagiAkSET/{id}";
     uint256[] TOKENISED = [0, 1];
+
+    uint256[] isClaimable = [1, 1]; 
+    uint256[] isVoucher = [0, 0]; 
+    uint256[] cost = [2500, 4500];
+    uint256[] hasAdditionalRequirements = [0, 0]; 
+
     uint256[] VOUCHERS_TO_MINT = [1];
     uint256[] AMOUNT_VOUCHERS_TO_MINT = [24];
     uint256[] NON_TOKENISED_TO_MINT = [0];
@@ -48,19 +54,22 @@ contract PointsForLoyaltyVouchersTest is Test {
         loyaltyGift = deployer.run();
     }
 
-    function testLoyaltyGiftHasTokenised() public {
-        uint256[] memory tokenised = loyaltyGift.getTokenised();
-        assertNotEq(tokenised.length, 0);
+    function testLoyaltyGiftHasGifts() public {
+        uint256 numberOfGifts = loyaltyGift.getNumberOfGifts();
+        assertNotEq(numberOfGifts, 0);
     }
 
     function testDeployEmitsevent() public {
         vm.expectEmit(true, false, false, false);
-        emit LoyaltyGiftDeployed(addressZero, TOKENISED);
+        emit LoyaltyGiftDeployed(addressZero);
 
         vm.prank(addressZero);
         loyaltyGift = new LoyaltyGift(
         GIFT_URI,  
-        TOKENISED
+        isClaimable,
+        isVoucher,
+        cost,
+        hasAdditionalRequirements 
         );
     }
 
