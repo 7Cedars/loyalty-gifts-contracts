@@ -1,16 +1,8 @@
 {
-  "title": "Party Access",
-  "description": "Entree to our blasting company party!",
+  "title": "A ticket to our blasting company party!",
+  "description": "Exchance 50,000 points for a ticket to our blasting company party!",
   "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmQyz1Dka9gmRkNPXzPTVNPy3dFt47xennS2JTF4s2viVb",
   "attributes": [
-    {
-      "trait_type": "is_voucher",
-      "value": 1
-    },
-    {
-      "trait_type": "Points",
-      "value": 50000
-    },
     {
       "trait_type": "additional_requirements",
       "value": "none"
@@ -25,7 +17,7 @@
     },
     {
       "trait_type": "vendor_message_at_voucher_redeem",
-      "value": "Valid Token. Let person in."
+      "value": "Valid voucher. Let person in."
     },
     {
       "trait_type": "customer_message_at_voucher_redeem",

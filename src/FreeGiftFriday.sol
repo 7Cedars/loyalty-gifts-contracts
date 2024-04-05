@@ -1,8 +1,16 @@
+/**
+ * NB: This library might be useful: https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary/tree/master?tab=readme-ov-file
+ * Chainlink does NOT have date source. 
+ *  
+ */ 
+ 
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
 import {LoyaltyGift} from "./LoyaltyGift.sol";
 import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
+import {DateTime} from "./DateTime.sol";
 import {ERC1155} from "lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -18,27 +26,15 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  * 
  */
 
-contract PointsForLoyaltyGifts is LoyaltyGift {
+contract FreeGiftFriday is LoyaltyGift {
     Gift gift0 = Gift({
         claimable: true, 
         cost: 2500, 
         additionalRequirements: false, 
         voucher: false 
-        }); 
-    Gift gift1 = Gift({
-        claimable: true, 
-        cost: 4500, 
-        additionalRequirements: false, 
-        voucher: false 
-        }); 
-    Gift gift2 = Gift({
-        claimable: true, 
-        cost: 50000, 
-        additionalRequirements: false, 
-        voucher: false 
-        }); 
+        });
 
-    Gift[] public gifts = [gift0, gift1, gift2];  
+    Gift[] public gifts = [gift0];  
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
@@ -70,25 +66,12 @@ contract PointsForLoyaltyGifts is LoyaltyGift {
         override
         returns (bool success)
     {
-        // loyalty gift 0: exchange 2500 points for gift. 
-        if (loyaltyGiftId == 0) {
-            if (loyaltyPoints < gifts[0].cost) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
-            }
+        if (DateTime.getDayOfWeek(block.timestamp) != 5 ) {
+            revert("It's not Friday!");
         }
 
-        // loyalty gift 1: exchange 4500 points for gift. 
-        if (loyaltyGiftId == 1) {
-            if (loyaltyPoints <  gifts[1].cost) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
-            }
-        }
-
-        // loyalty gift 2: exchange 50000 points for gift. 
-        if (loyaltyGiftId == 2) {
-            if (loyaltyPoints <  gifts[2].cost) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
-            }
+        if (loyaltyPoints < gifts[0].cost) {
+            revert("Not enough points.");
         }
 
         bool check = super.requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, loyaltyPoints);

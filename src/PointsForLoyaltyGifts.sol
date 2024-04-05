@@ -31,14 +31,8 @@ contract PointsForLoyaltyGifts is LoyaltyGift {
         additionalRequirements: false, 
         voucher: false 
         }); 
-    Gift gift2 = Gift({
-        claimable: true, 
-        cost: 50000, 
-        additionalRequirements: false, 
-        voucher: false 
-        }); 
 
-    Gift[] public gifts = [gift0, gift1, gift2];  
+    Gift[] public gifts = [gift0, gift1];  
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 
@@ -73,21 +67,14 @@ contract PointsForLoyaltyGifts is LoyaltyGift {
         // loyalty gift 0: exchange 2500 points for gift. 
         if (loyaltyGiftId == 0) {
             if (loyaltyPoints < gifts[0].cost) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
+                revert ("Not enough points.");
             }
         }
 
         // loyalty gift 1: exchange 4500 points for gift. 
         if (loyaltyGiftId == 1) {
             if (loyaltyPoints <  gifts[1].cost) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
-            }
-        }
-
-        // loyalty gift 2: exchange 50000 points for gift. 
-        if (loyaltyGiftId == 2) {
-            if (loyaltyPoints <  gifts[2].cost) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
+                revert ("Not enough points.");
             }
         }
 

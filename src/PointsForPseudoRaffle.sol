@@ -83,7 +83,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
         returns (bool success)
     {
         if (loyaltyGiftId != 0) revert ("Invalid token");
-        if (loyaltyPoints < 1250) revert ("Insufficient points") ;
+        if (loyaltyPoints < raffleGift.cost) revert ("Not enough points.");
         
         bool check = super.requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, loyaltyPoints);
         return check;

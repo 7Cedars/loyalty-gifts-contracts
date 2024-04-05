@@ -1,0 +1,27 @@
+{
+  "title": "A voucher for a free donought!",
+  "description": "This voucher can only be won in the raffle. It that can later be redeemed for a free donought.",
+  "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/<<URI>>",
+  "attributes": [
+    {
+      "trait_type": "additional_requirements",
+      "value": "none"
+    },
+    {
+      "trait_type": "vendor_message_at_claim",
+      "value": "none"
+    },
+    {
+      "trait_type": "customer_message_at_claim",
+      "value": "none"
+    },
+    {
+      "trait_type": "vendor_message_at_voucher_redeem",
+      "value": "Valid voucher. Give donought to customer."
+    },
+    {
+      "trait_type": "customer_message_at_voucher_redeem",
+      "value": "Enjoy your donought!"
+    }
+  ]
+}

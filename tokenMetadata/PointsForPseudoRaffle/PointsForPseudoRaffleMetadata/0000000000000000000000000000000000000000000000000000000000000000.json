@@ -1,6 +1,6 @@
 {
-  "title": "A voucher for a free coffee!",
-  "description": "Exchange 2500 points for a voucher that can later be redeemed for a free coffee.",
+  "title": "A raffle: get a free coffee, donought or cupcake!",
+  "description": "Exchange 1250 points to enter a pseudo random raffle with three prices: a free coffee, donought or cupcake.",
   "image": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmNTm2abX3z4WtjLuQk9ysbyM2hUwbWGrzbQn3h6m4DKWv",
   "attributes": [
     {
@@ -9,19 +9,19 @@
     },
     {
       "trait_type": "vendor_message_at_claim",
-      "value": "No further action required. Points have been received and voucher sent."
+      "value": "No further action required. Points have been received, raflle has completed and voucher sent."
     },
     {
       "trait_type": "customer_message_at_claim",
-      "value": "Your free coffee voucher has been send. You can use this to get a fere coffee at a later date."
+      "value": "Your voucher has been sent. Check your card to see what you received!"
     },
     {
       "trait_type": "vendor_message_at_voucher_redeem",
-      "value": "Valid voucher. Give free coffee to customer."
+      "value": "none"
     },
     {
       "trait_type": "customer_message_at_voucher_redeem",
-      "value": "Enjoy your coffee!"
+      "value": "none"
     }
   ]
 }

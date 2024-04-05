@@ -73,21 +73,21 @@ contract PointsForLoyaltyVouchers is LoyaltyGift {
         // loyalty gift 3: exchange 2500 points for voucher. 
         if (loyaltyGiftId == 0) {
             if (loyaltyPoints < gifts[0].costs) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
+                revert ("Not enough points.");
             }
         }
 
         // loyalty gift 3: exchange 4500 points for voucher. 
         if (loyaltyGiftId == 1) {
             if (loyaltyPoints < gifts[1].costs) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
+                revert ("Not enough points.");
             }
         }
 
         // loyalty gift 3: exchange 50000 points for voucher. 
         if (loyaltyGiftId == 2) {
             if (loyaltyPoints < gifts[2].costs) {
-                revert LoyaltyGift__RequirementsNotMet(address(this), loyaltyGiftId);
+                revert ("Not enough points.");
             }
         }
 

@@ -204,6 +204,7 @@ GitHub profile [https://github.com/7Cedars](https://github.com/7Cedars)
 * I took the template for the readme file from [Drew Othneil](https://github.com/othneildrew/Best-README-Template/blob/master/README.md?plain=1). 
 * All the images for the gifts and vouchers were created with help from www.svgrepo.com. A fantastic repo with CC licensed art work. Specific links are included in all the images.   
 * And a special thanks should go out to [SpeedRunEthereum](https://speedrunethereum.com/) and [LearnWeb3](https://learnweb3.io/) for providing the first introductions to solidity coding. 
+* The DateTime library was copy-pasted from https://github.com/RollaProject/solidity-datetime/blob/master/contracts/DateTime.sol 
 * And the deploy scripts use Etherscan.io APIs.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
