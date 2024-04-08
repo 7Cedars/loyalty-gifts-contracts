@@ -4,8 +4,8 @@ pragma solidity ^0.8.19;
 import {Test, console} from "forge-std/Test.sol";
 import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
-import {DeployPointsForLoyaltyVouchers} from "../../script/DeployPointsForLoyaltyVouchers.s.sol";
-import {PointsForLoyaltyVouchers} from "../../src/PointsForLoyaltyVouchers.sol";
+import {DeployPointsForPseudoRaffle} from "../../script/DeployPointsForPseudoRaffle.s.sol";
+import {PointsForPseudoRaffle} from "../../src/PointsForPseudoRaffle.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 
 /**
@@ -52,65 +52,62 @@ contract PointsForPseudoRaffleTest is Test {
         emit LoyaltyGiftDeployed(addressZero);
 
         vm.prank(addressZero);
-        new PointsForLoyaltyVouchers(); 
+        new PointsForPseudoRaffle(); 
     }
 
     ///////////////////////////////////////////////
-    ///        Minting token / vouchers         ///
+    ///             Requirement test            ///
     ///////////////////////////////////////////////
-    function testLoyaltyVouchersCanBeMinted() public {
+    
+    function testRequirementRevertsWithNonZeroGiftId() public {
+        vm.expectRevert("Invalid token");     
         vm.prank(addressZero);
-        loyaltyGift.mintLoyaltyVouchers(VOUCHERS_TO_MINT, AMOUNT_VOUCHERS_TO_MINT);
+        loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 1, 3000);
 
-        assertEq(loyaltyGift.balanceOf(addressZero, VOUCHERS_TO_MINT[0]), AMOUNT_VOUCHERS_TO_MINT[0]);
-    }
-
-    function testMintingVouchersEmitsEvent() public {
-        vm.expectEmit(true, false, false, false, address(loyaltyGift));
-        emit TransferSingle(
-            addressZero, // address indexed operator,
-            address(0), // address indexed from,
-            addressZero, // address indexed to,
-            VOUCHERS_TO_MINT[0],
-            AMOUNT_VOUCHERS_TO_MINT[0]
-        );
-
+        vm.expectRevert("Invalid token");     
         vm.prank(addressZero);
-        loyaltyGift.mintLoyaltyVouchers(VOUCHERS_TO_MINT, AMOUNT_VOUCHERS_TO_MINT);
+        loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 2, 3000);
     }
 
-    ///////////////////////////////////////////////
-    ///            Issuing gifts                ///
-    ///////////////////////////////////////////////
-    function testReturnsTrueForSuccess() public {
-        vm.startPrank(addressZero);
-        
-        bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 1, 5000);
-        
-        vm.stopPrank();
-
+    function testRequirementPassessWithZeroGiftId() public {   
+        vm.prank(addressZero);
+        bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 3000);
         assertEq(result, true);
     }
 
-    function testIssueVoucherRevertsForNonAvailableTokenisedGift() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(LoyaltyGift.LoyaltyGift__NoVouchersAvailable.selector, address(loyaltyGift))
-        );
-        loyaltyGift.issueLoyaltyVoucher(addressOne, 1);
+    function testRequirementRevertsWithInsufficientPoints() public {
+        vm.expectRevert("Not enough points");   
+        vm.prank(addressZero);
+        loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 1000);
+    }
+
+    function testRequirementPassessWithSufficientPoints() public {   
+        vm.prank(addressZero);
+        bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 1250);
+        assertEq(result, true);
     }
 
     ///////////////////////////////////////////////
-    ///    Reclaiming Tokens (vouchers)         ///
+    ///         Random Issuing Voucher          ///
     ///////////////////////////////////////////////
-    // function testRedeemRevertsForNonAvailableTokenisedGift() public {
-    //     vm.expectRevert(
-    //         abi.encodeWithSelector(
-    //             LoyaltyGift.LoyaltyGift__NotTokenised.selector, address(loyaltyGift), NON_TOKENISED_TO_MINT[0]
-    //         )
-    //     );
-    //     vm.prank(addressZero);
-    //     loyaltyGift.redeemLoyaltyVoucher(address(0), NON_TOKENISED_TO_MINT[0]);
-    // }
+    function testNoVoucherMeansIssueVouchersReverts() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                LoyaltyGift.LoyaltyGift__NoVouchersAvailable.selector, address(loyaltyGift)
+            )
+        );  
+        vm.prank(addressZero);
+        loyaltyGift.issueLoyaltyVoucher(addressOne, 1); 
+    }
 
-    // For further testing, see interaction tests.
+    function testOneVoucherMeansIssueVouchersIsDeterminate() public {
+        
+    }
+
+    function testIssueVouchersFallsWithinRange() public {
+        
+    }
+
+    // all other tests (including for the pseudoRandomNumber function) can be found in fuzz test folder. 
+
 }

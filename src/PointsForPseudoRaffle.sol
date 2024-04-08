@@ -73,7 +73,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
         returns (bool success)
     {
         if (loyaltyGiftId != 0) revert ("Invalid token");
-        if (loyaltyPoints < cost[0]) revert ("Not enough points.");
+        if (loyaltyPoints < cost[0]) revert ("Not enough points");
         
         bool check = super.requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, loyaltyPoints);
         return check;
@@ -109,7 +109,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
         safeTransferFrom(msg.sender, loyaltyCard, newLoyaltyGiftId, 1, "");
     }
 
-    function pseudoRandomNumber(uint256 numberVouchers1, uint256 numberVouchers2, uint256 numberVouchers3) private view returns (uint256) {
+    function pseudoRandomNumber(uint256 numberVouchers1, uint256 numberVouchers2, uint256 numberVouchers3) private view returns (uint256 selectedId) {
         uint256 totalVouchers = numberVouchers1 + numberVouchers2 + numberVouchers3; 
 
         uint256 randomNumber = uint256(

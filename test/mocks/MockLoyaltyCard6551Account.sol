@@ -9,6 +9,7 @@ import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/Signa
 import {IERC1155Receiver} from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 
 interface IERC6551Account {
+    
     receive() external payable;
 
     function token()
@@ -33,6 +34,8 @@ interface IERC6551Executable {
 
 contract MockLoyaltyCard6551Account is IERC165, IERC1271, IERC6551Account, IERC6551Executable {
     uint256 public state;
+
+    function test() public {} // to have foundry ignore this file in coverage report. see £ack https://ethereum.stackexchange.com/questions/155700/force-foundry-to-ignore-contracts-during-a-coverage-report
 
     receive() external payable {}
 

@@ -168,6 +168,9 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
 
         emit DeployedLoyaltyProgram(msg.sender, _name, _version);
     }
+    
+    function test() public {} // to have foundry ignore this file in coverage report. see £ack https://ethereum.stackexchange.com/questions/155700/force-foundry-to-ignore-contracts-during-a-coverage-report
+
 
     /**
      * @notice mints loyaltyCards. Each is a non-fungible token (NFT), that is linked to a token bound account. - this function is a real gas guzzler. 

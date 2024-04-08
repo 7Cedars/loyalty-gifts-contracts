@@ -40,6 +40,11 @@ library DateTime {
     uint256 constant DOW_SAT = 6;
     uint256 constant DOW_SUN = 7;
 
+    // opted to ignore this library from testing. 
+    // it has been internall tested, see:  https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary/tree/master/test
+    // but NOT properly audited! -- it should never be used for anything too serious. 
+    function test() public {} // to have foundry ignore this file in coverage report. see £ack https://ethereum.stackexchange.com/questions/155700/force-foundry-to-ignore-contracts-during-a-coverage-report
+
     // ------------------------------------------------------------------------
     // Calculate the number of days from 1970/01/01 to year/month/day using
     // the date conversion algorithm from
