@@ -14,7 +14,7 @@ import {HelperConfig} from "../../script/HelperConfig.s.sol";
  * @notice Tests are intentionally kept very simple.
  */
 
-contract PointsForLoyaltyGiftsTest is Test {
+contract PointsForLoyaltyGifts_testFuzz is Test {
     /**
      * events
      */
@@ -43,39 +43,38 @@ contract PointsForLoyaltyGiftsTest is Test {
         loyaltyGift = deployer.run();
     }
 
-    function testLoyaltyGiftHasGifts() public {
-        uint256 numberOfGifts = loyaltyGift.getNumberOfGifts();
-        assertNotEq(numberOfGifts, 0);
-    }
-
-    function testDeployEmitsevent() public {
-        vm.expectEmit(true, false, false, false);
-        emit LoyaltyGiftDeployed(addressZero);
-        
-        vm.prank(addressZero);
-        new PointsForLoyaltyGifts();
-    }
-
     ///////////////////////////////////////////////
     ///            Issuing gifts                ///
     ///////////////////////////////////////////////
-    function testReturnsTrueForSuccess() public {
-        vm.prank(addressZero);
-        bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 3000); 
-        assertEq(result, true);
+    function testFuzz_GiftZeroReturnsCorrectAssessment(uint256 points) public {
+        if (points < 2500) { 
+            vm.expectRevert("Not enough points."); 
+
+            vm.prank(addressZero);
+            loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, points); 
+        }
+
+        if (points >= 2500) { 
+            vm.prank(addressZero);
+            bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, points); 
+            
+            assertEq(result, true); 
+        } 
     }
 
-    ///////////////////////////////////////////////
-    ///    Reclaiming Tokens (vouchers)         ///
-    ///////////////////////////////////////////////
-    function testRedeemRevertsForNonAvailableTokenisedGift() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                LoyaltyGift.LoyaltyGift__IsNotVoucher.selector, address(loyaltyGift), NON_VOUCHER_TO_MINT[0]
-            )
-        );
-        vm.prank(addressZero);
-        loyaltyGift.redeemLoyaltyVoucher(address(0), NON_VOUCHER_TO_MINT[0]);
-    }
+    function testFuzz_GiftOneReturnsCorrectAssessment(uint256 points) public {
+        if (points < 4500) { 
+            vm.expectRevert("Not enough points."); 
 
+            vm.prank(addressZero);
+            loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 1, points); 
+        }
+
+        if (points >= 4500) { 
+            vm.prank(addressZero);
+            bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 1, points); 
+            
+            assertEq(result, true); 
+        } 
+    }
 }

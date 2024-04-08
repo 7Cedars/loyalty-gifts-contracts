@@ -5,6 +5,7 @@ import {Test, console} from "forge-std/Test.sol";
 import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployPointsForLoyaltyVouchers} from "../../script/DeployPointsForLoyaltyVouchers.s.sol";
+import {PointsForLoyaltyVouchers} from "../../src/PointsForLoyaltyVouchers.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 
 /**
@@ -28,15 +29,6 @@ contract PointsForLoyaltyVouchersTest is Test {
     address addressZero = vm.addr(keyZero);
     uint256 keyOne = vm.envUint("DEFAULT_ANVIL_KEY_1");
     address addressOne = vm.addr(keyOne);
-
-    string GIFT_URI =
-        "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmSshfobzx5jtA14xd7zJ1PtmG8xFaPkAq2DZQagiAkSET/{id}";
-    uint256[] TOKENISED = [0, 1];
-
-    uint256[] isClaimable = [1, 1]; 
-    uint256[] isVoucher = [0, 0]; 
-    uint256[] cost = [2500, 4500];
-    uint256[] hasAdditionalRequirements = [0, 0]; 
 
     uint256[] VOUCHERS_TO_MINT = [1];
     uint256[] AMOUNT_VOUCHERS_TO_MINT = [24];
@@ -64,13 +56,7 @@ contract PointsForLoyaltyVouchersTest is Test {
         emit LoyaltyGiftDeployed(addressZero);
 
         vm.prank(addressZero);
-        loyaltyGift = new LoyaltyGift(
-        GIFT_URI,  
-        isClaimable,
-        isVoucher,
-        cost,
-        hasAdditionalRequirements 
-        );
+        new PointsForLoyaltyVouchers(); 
     }
 
     ///////////////////////////////////////////////

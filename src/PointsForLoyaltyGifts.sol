@@ -19,7 +19,6 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  */
 
 contract PointsForLoyaltyGifts is LoyaltyGift {
-
     /* Each gift contract is setup with four equal sized arrays providing info on gifts per index: 
     @param isClaimable => can gift directly be claimed by customer?
     @param isVoucher => is the gift a voucher (to be redeemed later) or has to be immediatly redeemed at the till? 
