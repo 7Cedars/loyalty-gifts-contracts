@@ -83,7 +83,7 @@ contract TieredAccess is LoyaltyGift {
         // loyalty gift 3: at least bronze token + 1500 points => 5% off purchase at the till. 
         if (loyaltyGiftId == 3) {
             if (loyaltyPoints < cost[3]) {
-              revert ("Not enough points.");
+              revert ("Not enough points");
             }
             if (
               balanceTokens[0] == 0 && 
@@ -97,7 +97,7 @@ contract TieredAccess is LoyaltyGift {
         // loyalty gift 4: at least silver token + 2500 points => 15% off purchase at the till. 
         if (loyaltyGiftId == 4) {
             if (loyaltyPoints < cost[4]) {
-              revert ("Not enough points.");
+              revert ("Not enough points");
             }
             if (
               balanceTokens[1] == 0 && 
@@ -110,7 +110,7 @@ contract TieredAccess is LoyaltyGift {
         // loyalty gift 5: at least golder token + 5000 points => voucher for access to private tour shop.  
         if (loyaltyGiftId == 5) {
             if (loyaltyPoints < cost[5]) {
-              revert ("Not enough points.");
+              revert ("Not enough points");
             }
             if ( balanceTokens[2] == 0 ) {
               revert ("No Gold token on Card");

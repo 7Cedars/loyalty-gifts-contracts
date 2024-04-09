@@ -38,6 +38,8 @@ contract FridaysFifteenPercentTest is Test {
     LoyaltyGift loyaltyGift;
     MockLoyaltyProgram loyaltyProgram; 
 
+    
+
     function setUp() external {
         DeployFridaysFifteenPercent giftDeployer = new DeployFridaysFifteenPercent();
         loyaltyGift = giftDeployer.run();
@@ -64,12 +66,6 @@ contract FridaysFifteenPercentTest is Test {
     ///////////////////////////////////////////////
 
     function testRequirementRevertsWithInsufficientPoints() public { 
-      vm.warp(1712282400); // = Friday 5 April 2024
-      (uint256 year, uint256 month, uint256 day) = DateTime.timestampToDate(block.timestamp); 
-      console.logUint(year); 
-      console.logUint(month); 
-      console.logUint(day); 
-
       vm.expectRevert("Not enough points"); 
 
       vm.prank(addressZero); 
@@ -88,6 +84,10 @@ contract FridaysFifteenPercentTest is Test {
 
     function testRequirementPassesWithSufficientPointsAndCorrectDayOfWeek() public { 
       vm.warp(1712282400); // = Friday 5 April 2024
+      (uint256 year, uint256 month, uint256 day) = DateTime.timestampToDate(block.timestamp); 
+      console.logUint(year); 
+      console.logUint(month); 
+      console.logUint(day); 
 
       vm.prank(addressZero); 
       (bool result) = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 2500); 
