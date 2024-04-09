@@ -72,12 +72,12 @@ contract FridaysFifteenPercent is LoyaltyGift {
         override
         returns (bool success)
     {
-        if (DateTime.getDayOfWeek(block.timestamp) != 5 ) {
-            revert("It's not Friday!");
+        if (loyaltyPoints < cost[0]) {
+            revert("Not enough points");
         }
 
-        if (loyaltyPoints < cost[0]) {
-            revert("Not enough points.");
+        if (DateTime.getDayOfWeek(block.timestamp) != 5 ) {
+            revert("It's not Friday!");
         }
 
         bool check = super.requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, loyaltyPoints);
