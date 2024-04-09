@@ -29,9 +29,6 @@ contract PointsForLoyaltyGiftsTest is Test {
     uint256 keyOne = vm.envUint("DEFAULT_ANVIL_KEY_1");
     address addressOne = vm.addr(keyOne);
 
-    uint256[] NON_VOUCHER_TO_MINT = [0];
-    uint256[] AMOUNT_NON_VOUCHER_TO_MINT = [1];
-
     ///////////////////////////////////////////////
     ///                   Setup                 ///
     ///////////////////////////////////////////////
@@ -69,13 +66,15 @@ contract PointsForLoyaltyGiftsTest is Test {
     ///    Reclaiming Tokens (vouchers)         ///
     ///////////////////////////////////////////////
     function testRedeemRevertsForNonAvailableTokenisedGift() public {
+        uint256 nonVoucherId = 0; 
+
         vm.expectRevert(
             abi.encodeWithSelector(
-                LoyaltyGift.LoyaltyGift__IsNotVoucher.selector, address(loyaltyGift), NON_VOUCHER_TO_MINT[0]
+                LoyaltyGift.LoyaltyGift__IsNotVoucher.selector, address(loyaltyGift), nonVoucherId
             )
         );
         vm.prank(addressZero);
-        loyaltyGift.redeemLoyaltyVoucher(address(0), NON_VOUCHER_TO_MINT[0]);
+        loyaltyGift.redeemLoyaltyVoucher(address(0), nonVoucherId);
     }
 
 }

@@ -87,23 +87,20 @@ contract PointsForPseudoRaffle is LoyaltyGift {
     public 
     override 
     {   
-        msgAddressess = [msg.sender, msg.sender, msg.sender]; 
-        giftIndices = [1, 2, 3]; 
+        // better to do this with balanceOfBatch - but I run into odd out-of-bounds error. 
+        uint256 balanceVoucher1 = balanceOf(msg.sender, 1); 
+        uint256 balanceVoucher2 = balanceOf(msg.sender, 2); 
+        uint256 balanceVoucher3 = balanceOf(msg.sender, 3); 
 
-        uint256[] memory balanceVouchers = balanceOfBatch(
-            msgAddressess, 
-            giftIndices
-            );
-
-        if (balanceVouchers[1] + balanceVouchers[2] + balanceVouchers[3] == 0) {
+        if (balanceVoucher1 + balanceVoucher2 + balanceVoucher3 == 0) {
             revert LoyaltyGift__NoVouchersAvailable(address(this));
         }
         
         // @dev: selection of loyalty gift Id subject to availabilty vouchers. 
         uint256 newLoyaltyGiftId = pseudoRandomNumber(
-            balanceVouchers[1], 
-            balanceVouchers[2], 
-            balanceVouchers[3]
+            balanceVoucher1, 
+            balanceVoucher2, 
+            balanceVoucher3
             ); 
 
         safeTransferFrom(msg.sender, loyaltyCard, newLoyaltyGiftId, 1, "");

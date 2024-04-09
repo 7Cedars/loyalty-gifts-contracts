@@ -96,6 +96,10 @@ contract PointsForLoyaltyVouchersTest is Test {
         assertEq(result, true);
     }
 
+    // For further testing, see integration tests.
+
+
+
     function testIssueVoucherRevertsForNonAvailableTokenisedGift() public {
         vm.expectRevert(
             abi.encodeWithSelector(LoyaltyGift.LoyaltyGift__NoVouchersAvailable.selector, address(loyaltyGift))
@@ -116,5 +120,5 @@ contract PointsForLoyaltyVouchersTest is Test {
     //     loyaltyGift.redeemLoyaltyVoucher(address(0), NON_TOKENISED_TO_MINT[0]);
     // }
 
-    // For further testing, see interaction tests.
+   
 }

@@ -101,12 +101,22 @@ contract PointsForPseudoRaffleTest is Test {
     }
 
     function testOneVoucherMeansIssueVouchersIsDeterminate() public {
-        
+        uint256[] memory giftId = new uint256[](1); 
+        giftId[0] = 1; 
+        uint256[] memory numberOfGifts = new uint256[](1); 
+        numberOfGifts[0] = 25;
+
+        vm.startPrank(addressZero); 
+        loyaltyGift.mintLoyaltyVouchers(giftId, numberOfGifts);
+        loyaltyGift.issueLoyaltyVoucher(addressOne, 9999999999999999); // need to fill out uint256 here - but just dummy data
+        vm.stopPrank(); 
+
+        assertEq(loyaltyGift.balanceOf(addressOne, 1), 1);
     }
 
-    function testIssueVouchersFallsWithinRange() public {
+    // function testIssueVouchersFallsWithinRange() public {
         
-    }
+    // }
 
     // all other tests (including for the pseudoRandomNumber function) can be found in fuzz test folder. 
 
