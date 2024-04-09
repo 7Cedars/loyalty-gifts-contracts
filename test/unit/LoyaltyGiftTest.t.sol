@@ -133,34 +133,42 @@ contract LoyaltyGiftsTest is Test {
         loyaltyGift.issueLoyaltyVoucher(addressOne, voucherId);        
     }
 
-    // £todo runs into an odd bug. come back to this later.  
-    // function testVoucherIsIssued() public {
-    //     uint256[] memory voucherId = new uint256[](1); // only emmpty fixed arrays can be initiated in memory 
-    //     voucherId[0] = 1; 
-    //     uint256[] memory numberOfVouchers = new uint256[](1); 
-    //     numberOfVouchers[0] = 25;
-    //     address ownerProgram = loyaltyProgram.getOwner(); 
+    function testVoucherIsIssued() public {
+        uint256[] memory voucherId = new uint256[](1); // only emmpty fixed arrays can be initiated in memory 
+        voucherId[0] = 1; 
+        uint256[] memory numberOfVouchers = new uint256[](1); 
+        numberOfVouchers[0] = 25;
+        address ownerProgram = loyaltyProgram.getOwner(); 
 
-    //     vm.startPrank(ownerProgram);
-    //     loyaltyProgram.mintLoyaltyCards(5); 
-    //     loyaltyProgram.mintLoyaltyPoints(50_000); 
-    //     vm.stopPrank();
+        // step 1: owner mints cards and points. 
+        vm.startPrank(ownerProgram);
+        loyaltyProgram.mintLoyaltyCards(5); 
+        loyaltyProgram.mintLoyaltyPoints(50_000); 
+        vm.stopPrank();
 
-    //     address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1); 
+        // step 2: get address of TBA of card no 1. 
+        address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1); 
 
-    //     vm.startPrank(ownerProgram);
-    //     loyaltyProgram.safeTransferFrom(
-    //         ownerProgram, loyaltyCardAddress, 0, 10_000, ""
-    //     ); 
-    //     loyaltyGift.mintLoyaltyVouchers(voucherId, numberOfVouchers);
-    //     loyaltyProgram.getBalanceLoyaltyCard(loyaltyCardAddress); 
+        // step 3a: owner transfers points to card 1 & transfers card 1 to addressZero. 
+        vm.startPrank(ownerProgram);
+        loyaltyProgram.safeTransferFrom(
+            ownerProgram, loyaltyCardAddress, 0, 10_000, ""
+        ); 
+        loyaltyProgram.safeTransferFrom(
+            ownerProgram, addressZero, 1, 1, ""
+        );
 
+        // step 3b: owner adds gift & mints its vouchers. 
+        loyaltyProgram.addLoyaltyGift(address(loyaltyGift), voucherId[0]); 
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherId, numberOfVouchers);
+        vm.stopPrank(); 
 
-    //     loyaltyGift.issueLoyaltyVoucher(loyaltyCardAddress, voucherId[0]); 
-    //     vm.stopPrank(); 
-
-        // assertEq(loyaltyGift.balanceOf(addressOne, voucherId[0]), 1); 
-    // }
+        // step 4: loyalty program is called to transfer vouchers to loyalty card (vouchers are owned by loyaltyProgram, not the owner of the program!). 
+        vm.prank(address(loyaltyProgram));
+        loyaltyGift.issueLoyaltyVoucher(loyaltyCardAddress, voucherId[0]); 
+        
+        assertEq(loyaltyGift.balanceOf(loyaltyCardAddress, voucherId[0]), 1); 
+    }
 
     //////////////////////////////////////////////
     ///            Redeem vouchers             ///

@@ -507,7 +507,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
                 }
             }
             if (ids[i] != LOYALTY_POINTS_ID) {
-                if (s_LoyaltyCards[to] == 1) {
+                if (s_LoyaltyCards[to] == 1) { // vouchers cannot be transferred to non-loyaltycards. 
                     revert LoyaltyProgram__TransferDenied();
                 }
             }

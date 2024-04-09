@@ -5,6 +5,7 @@ import {Test, console} from "forge-std/Test.sol";
 import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployPointsForPseudoRaffle} from "../../script/DeployPointsForPseudoRaffle.s.sol";
+import {DeployMockLoyaltyProgram} from "../../script/DeployMockLoyaltyProgram.s.sol";
 import {PointsForPseudoRaffle} from "../../src/PointsForPseudoRaffle.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 
@@ -36,10 +37,14 @@ contract PointsForPseudoRaffleTest is Test {
     ///////////////////////////////////////////////
 
     LoyaltyGift loyaltyGift;
+    MockLoyaltyProgram loyaltyProgram; 
 
     function setUp() external {
-        DeployPointsForPseudoRaffle deployer = new DeployPointsForPseudoRaffle();
-        loyaltyGift = deployer.run();
+        DeployPointsForPseudoRaffle giftDeployer = new DeployPointsForPseudoRaffle();
+        loyaltyGift = giftDeployer.run();
+
+        DeployMockLoyaltyProgram programDeployer = new DeployMockLoyaltyProgram();
+        (loyaltyProgram, ) = programDeployer.run();
     }
 
     function testLoyaltyGiftHasGifts() public {
@@ -102,22 +107,85 @@ contract PointsForPseudoRaffleTest is Test {
 
     function testOneVoucherMeansIssueVouchersIsDeterminate() public {
         uint256[] memory giftId = new uint256[](1); 
-        giftId[0] = 1; 
-        uint256[] memory numberOfGifts = new uint256[](1); 
-        numberOfGifts[0] = 25;
+        giftId[0] = 0; 
+        uint256[] memory voucherId = new uint256[](1); 
+        voucherId[0] = 2; 
+        uint256[] memory numberOfVouchers = new uint256[](1); 
+        numberOfVouchers[0] = 25;
+        address ownerProgram = loyaltyProgram.getOwner(); 
 
-        vm.startPrank(addressZero); 
-        loyaltyGift.mintLoyaltyVouchers(giftId, numberOfGifts);
-        loyaltyGift.issueLoyaltyVoucher(addressOne, 9999999999999999); // need to fill out uint256 here - but just dummy data
-        vm.stopPrank(); 
+        // step 1: owner mints cards and points. 
+        vm.startPrank(ownerProgram);
+        loyaltyProgram.mintLoyaltyCards(5); 
+        loyaltyProgram.mintLoyaltyPoints(50_000); 
+        vm.stopPrank();
 
-        assertEq(loyaltyGift.balanceOf(addressOne, 1), 1);
+        // step 2: get address of TBA of card no 1. 
+        address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1); 
+
+        // step 3a: owner transfers points to card 1 & transfers card 1 to addressZero 
+        vm.startPrank(ownerProgram);
+        loyaltyProgram.safeTransferFrom(
+            ownerProgram, loyaltyCardAddress, 0, 10_000, ""
+        ); 
+        loyaltyProgram.safeTransferFrom(
+            ownerProgram, addressZero, 1, 1, ""
+        );
+
+        // step 3b: owner adds raffle as loyalty gift & mints vouchers
+        loyaltyProgram.addLoyaltyGift(address(loyaltyGift), giftId[0]); 
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherId, numberOfVouchers);
+        vm.stopPrank();
+
+        // step 4: loyaltyProgram calls raffle giftId 0 -> the available vouchers should be issued  . 
+        vm.prank(address(loyaltyProgram));
+        loyaltyGift.issueLoyaltyVoucher(loyaltyCardAddress, giftId[0]); 
+        
+        assertEq(loyaltyGift.balanceOf(loyaltyCardAddress, voucherId[0]), 1);
     }
 
-    // function testIssueVouchersFallsWithinRange() public {
-        
-    // }
+    function testIssueVouchersFallsWithinRange() public {
+        uint256[] memory giftId = new uint256[](1); 
+        giftId[0] = 0; 
+        uint256[] memory voucherIds = new uint256[](3); 
+        voucherIds[0] = 1; voucherIds[1] = 2; voucherIds[2] = 3; 
+        uint256[] memory numberOfVouchers = new uint256[](3); 
+        numberOfVouchers[0] = 5; numberOfVouchers[1] = 25; numberOfVouchers[2] = 50;
+        address ownerProgram = loyaltyProgram.getOwner(); 
 
+        // step 1: owner mints cards and points. 
+        vm.startPrank(ownerProgram);
+        loyaltyProgram.mintLoyaltyCards(5); 
+        loyaltyProgram.mintLoyaltyPoints(50_000); 
+        vm.stopPrank();
+
+        // step 2: get address of TBA of card no 1. 
+        address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1); 
+
+        // step 3a: owner transfers points to card 1 & transfers card 1 to addressZero 
+        vm.startPrank(ownerProgram);
+        loyaltyProgram.safeTransferFrom(
+            ownerProgram, loyaltyCardAddress, 0, 10_000, ""
+        ); 
+        loyaltyProgram.safeTransferFrom(
+            ownerProgram, addressZero, 1, 1, ""
+        );
+
+        // step 3b: owner adds raffle as loyalty gift & mints vouchers
+        loyaltyProgram.addLoyaltyGift(address(loyaltyGift), giftId[0]); 
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherIds, numberOfVouchers);
+        vm.stopPrank();
+
+        // step 4: loyaltyProgram calls raffle giftId 0 -> the available vouchers should be issued  . 
+        vm.prank(address(loyaltyProgram));
+        loyaltyGift.issueLoyaltyVoucher(loyaltyCardAddress, giftId[0]); 
+        
+        assertEq(
+            loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[0]) + 
+            loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[1]) + 
+            loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[2]), 
+            1);
+    }
     // all other tests (including for the pseudoRandomNumber function) can be found in fuzz test folder. 
 
 }
