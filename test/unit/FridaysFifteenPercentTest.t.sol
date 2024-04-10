@@ -31,14 +31,12 @@ contract FridaysFifteenPercentTest is Test {
     uint256 keyOne = vm.envUint("DEFAULT_ANVIL_KEY_1");
     address addressOne = vm.addr(keyOne);
 
-    ///////////////////////////////////////////////
-    ///                   Setup                 ///
-    ///////////////////////////////////////////////
-
     LoyaltyGift loyaltyGift;
     MockLoyaltyProgram loyaltyProgram; 
 
-    
+    ///////////////////////////////////////////////
+    ///                   Setup                 ///
+    ///////////////////////////////////////////////
 
     function setUp() external {
         DeployFridaysFifteenPercent giftDeployer = new DeployFridaysFifteenPercent();
