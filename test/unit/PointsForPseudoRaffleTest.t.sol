@@ -22,9 +22,7 @@ contract PointsForPseudoRaffleTest is Test {
      * events
      */
     event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value);
-    event TransferBatch(
-        address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values
-    );
+    event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values);
     event LoyaltyGiftDeployed(address indexed issuer);
 
     uint256 keyZero = vm.envUint("DEFAULT_ANVIL_KEY_0");
