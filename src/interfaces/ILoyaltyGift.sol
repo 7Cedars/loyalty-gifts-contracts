@@ -13,9 +13,8 @@ interface ILoyaltyGift is IERC1155 {
     /**
      * @dev natspecs TBI
      */
-    event LoyaltyGiftDeployed(address indexed issuer);
+    event LoyaltyGiftDeployed(address indexed issuer, uint256[] isVoucher);
     
-
     /**
      * @notice provides the requirement logics for receiving gifts.  Returns true or false. 
      * 

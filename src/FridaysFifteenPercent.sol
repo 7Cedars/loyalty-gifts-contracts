@@ -35,7 +35,7 @@ contract FridaysFifteenPercent is LoyaltyGift {
     @param hasAdditionalRequirements =>  Are their additional requirements? 
     */
     uint256[] isClaimable = [1]; 
-    uint256[] isVoucher = [1]; 
+    uint256[] isVoucher = [0]; 
     uint256[] cost = [2500];
     uint256[] hasAdditionalRequirements = [0];   
 

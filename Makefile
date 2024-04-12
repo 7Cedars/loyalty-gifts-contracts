@@ -30,6 +30,9 @@ snapshot :; forge snapshot
 format :; forge fmt
 anvil :; anvil -m 'test test test test test test test test test test test junk' --steps-tracing --block-time 1
 
+# verify contract after it has been deployed.  
+verify:
+	@forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch --constructor-args 0x00000000000000000000000000000000000000000000d3c21bcecceda1000000 --etherscan-api-key $(ETHERSCAN_API_KEY) --compiler-version v0.8.19+commit.7dd6d404 0x089dc24123e0a27d44282a1ccc2fd815989e3300 src/OurToken.sol:OurToken
 
 
 ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
@@ -111,9 +114,11 @@ mumbaiForkedDeploy:
 ANVIL_ARGS_0 := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY_0) --broadcast
 
 anvilDeployGifts:
+	@forge script script/DeployFridaysFifteenPercent.s.sol:DeployFridaysFifteenPercent $(ANVIL_ARGS_0)
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(ANVIL_ARGS_0)
-	@forge script script/DeployPointsForLoyaltyVouchers.s.s.sol:DeployPointsForLoyaltyVouchers.s $(ANVIL_ARGS_0)
+	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(ANVIL_ARGS_0)
+	@forge script script/DeployPointsForPseudoRaffle.s.sol:DeployPointsForPseudoRaffle $(ANVIL_ARGS_0)
+	@forge script script/DeployTieredAccess.s.sol:DeployTieredAccess $(ANVIL_ARGS_0)
 
-# verify example 
-verify:
-	@forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch --constructor-args 0x00000000000000000000000000000000000000000000d3c21bcecceda1000000 --etherscan-api-key $(ETHERSCAN_API_KEY) --compiler-version v0.8.19+commit.7dd6d404 0x089dc24123e0a27d44282a1ccc2fd815989e3300 src/OurToken.sol:OurToken
+
+

@@ -23,7 +23,7 @@ contract PointsForPseudoRaffleTest is Test {
      */
     event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value);
     event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values);
-    event LoyaltyGiftDeployed(address indexed issuer);
+    event LoyaltyGiftDeployed(address indexed issuer, uint256[] isVoucher);
 
     uint256 keyZero = vm.envUint("DEFAULT_ANVIL_KEY_0");
     address addressZero = vm.addr(keyZero);
@@ -51,8 +51,11 @@ contract PointsForPseudoRaffleTest is Test {
     }
 
     function testDeployEmitsevent() public {
+        uint256[] memory isVoucher = new uint256[](4); 
+        isVoucher[0] = 0; isVoucher[1] = 1; isVoucher[2] = 1; isVoucher[3] = 1;
+
         vm.expectEmit(true, false, false, false);
-        emit LoyaltyGiftDeployed(addressZero);
+        emit LoyaltyGiftDeployed(addressZero, isVoucher);
 
         vm.prank(addressZero);
         new PointsForPseudoRaffle(); 
