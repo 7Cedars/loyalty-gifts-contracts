@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.sol";
+import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployPointsForPseudoRaffle} from "../../script/DeployPointsForPseudoRaffle.s.sol";
 import {DeployMockLoyaltyProgram} from "../../script/DeployMockLoyaltyProgram.s.sol";

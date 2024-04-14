@@ -5,8 +5,8 @@ pragma solidity 0.8.24;
 
 import {Script, console} from "forge-std/Script.sol";
 import {LoyaltyGift} from "../src/LoyaltyGift.sol";
-import {ERC6551Registry} from "../test/mocks/ERC6551Registry.sol";
-import {MockLoyaltyCard6551Account} from "../test/mocks/MockLoyaltyCard6551Account.sol";
+import {ERC6551Registry} from "../test/mocks/ERC6551Registry.t.sol";
+import {MockLoyaltyCard6551Account} from "../test/mocks/MockLoyaltyCard6551Account.t.sol";
 
 contract HelperConfig is Script {
     // these are all the same for networks with deployed ERC6551 - local anvil chain obv does not have one.

@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import {Script} from "forge-std/Script.sol";
-import {MockLoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.sol";
+import {MockLoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.t.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";

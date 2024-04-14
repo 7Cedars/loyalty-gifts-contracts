@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 // import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol"; // ERC165 not implemented for now. 
 // import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol"; // ERC165 not implemented for now. 
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import {MockLoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.sol";
+import {MockLoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.t.sol";
 import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
 
 /**

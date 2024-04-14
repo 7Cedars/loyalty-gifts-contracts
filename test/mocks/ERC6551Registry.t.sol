@@ -44,7 +44,7 @@ interface IERC6551Registry {
     function account(
         address implementation,
         bytes32 salt,
-        uint256 chainId,
+        uint256test/mocks/ERC6551Registry.t.sol chainId,
         address tokenContract,
         uint256 tokenId
     ) external view returns (address account);

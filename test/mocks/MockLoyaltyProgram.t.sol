@@ -12,8 +12,8 @@ import {ILoyaltyGift} from "../../src/interfaces/ILoyaltyGift.sol";
 
 import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import {ERC6551Registry} from "./ERC6551Registry.sol";
-import {MockLoyaltyCard6551Account} from "./MockLoyaltyCard6551Account.sol";
+import {ERC6551Registry} from "./ERC6551Registry.t.sol";
+import {MockLoyaltyCard6551Account} from "./MockLoyaltyCard6551Account.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 
 /**
