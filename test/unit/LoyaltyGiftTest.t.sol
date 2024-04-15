@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.t.sol";
+import {LoyaltyProgram} from "../mocks/LoyaltyProgram.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployPointsForLoyaltyGifts} from "../../script/DeployPointsForLoyaltyGifts.s.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
@@ -27,7 +27,7 @@ contract LoyaltyGiftsTest is Test {
     uint256[] cost = [2500, 4500];
     uint256[] hasAdditionalRequirements = [0, 0];   
     LoyaltyGift loyaltyGift;
-    MockLoyaltyProgram loyaltyProgram; 
+    LoyaltyProgram loyaltyProgram; 
 
     ///////////////////////////////////////////
     ///            Setup                    ///
@@ -49,7 +49,7 @@ contract LoyaltyGiftsTest is Test {
         hasAdditionalRequirements 
         );
 
-        loyaltyProgram = new MockLoyaltyProgram(
+        loyaltyProgram = new LoyaltyProgram(
             uri, 
             name,
             version,

@@ -2,18 +2,18 @@
 pragma solidity 0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {DeployMockLoyaltyProgram} from "../../script/DeployMockLoyaltyProgram.s.sol";
-import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.t.sol";
+import {DeployLoyaltyProgram} from "../../script/DeployLoyaltyProgram.s.sol";
+import {LoyaltyProgram} from "../mocks/LoyaltyProgram.t.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 
-contract DeployMockLoyaltyProgramTest is Test {
-    DeployMockLoyaltyProgram deployer;
-    MockLoyaltyProgram loyaltyProgram;
+contract DeployLoyaltyProgramTest is Test {
+    DeployLoyaltyProgram deployer;
+    LoyaltyProgram loyaltyProgram;
     HelperConfig helperConfig;
     uint256 LOYALTYCARDS_TO_MINT = 5;
 
     function setUp() public {
-        deployer = new DeployMockLoyaltyProgram();
+        deployer = new DeployLoyaltyProgram();
     }
 
     function testNameDeployedLoyaltyProgramIsCorrect() public {

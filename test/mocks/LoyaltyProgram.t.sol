@@ -65,7 +65,7 @@ import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
  *   ... £todo. 
  */
 
-contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGuard
+contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGuard
     /* errors */
     error LoyaltyProgram__OnlyOwner();
     error LoyaltyProgram__TransferDenied();
@@ -74,6 +74,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
     error LoyaltyProgram__RequestInvalid();
     error LoyaltyProgram__LoyaltyGiftInvalid();
     error LoyaltyProgram__LoyaltyVoucherInvalid();
+    error LoyaltyProgram__RequirementsGiftNotMet();
     error LoyaltyProgram__IncorrectInterface(address loyaltyGift, bytes4 interfaceId);
 
     /* Type declarations */
@@ -168,9 +169,6 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
 
         emit DeployedLoyaltyProgram(msg.sender, _name, _version);
     }
-    
-    function test() public {} // to have foundry ignore this file in coverage report. see £ack https://ethereum.stackexchange.com/questions/155700/force-foundry-to-ignore-contracts-during-a-coverage-report
-
 
     /**
      * @notice mints loyaltyCards. Each is a non-fungible token (NFT), that is linked to a token bound account. - this function is a real gas guzzler. 
@@ -377,6 +375,13 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
             revert LoyaltyProgram__LoyaltyGiftInvalid();
         }
 
+        // check if requirements are met.
+        if (LoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(loyaltyCardAddress, loyaltyGiftId, loyaltyPoints)) {
+            revert LoyaltyProgram__RequirementsGiftNotMet();
+        }
+
+        // £todo: should I not check here if requirements are met?! 
+
         // Effect.
         // 1) set executed to true..
         requestExecuted[digest] = 1;
@@ -386,9 +391,10 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
         // Interact.
         // 3) retrieve loyalty points from customer
         _safeTransferFrom(loyaltyCardAddress, s_owner, 0, loyaltyPoints, "");
-        // and 4), if gift is a voucher, transfer voucher.
+        // and 4), if gift is tokenised, transfer voucher.
         if (LoyaltyGift(loyaltyGiftAddress).getIsVoucher(loyaltyGiftId) == 1) {
-            LoyaltyGift(loyaltyGiftAddress).issueLoyaltyVoucher(loyaltyCardAddress, loyaltyGiftId);
+            // refactor into MockLoyaltyGift(loyaltyGift)._safeTransferFrom ? 
+            safeTransferFrom(s_owner, loyaltyCardAddress, loyaltyGiftId, 1, "");
         }
     }
 
@@ -460,8 +466,9 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
         s_nonceLoyaltyCard[loyaltyCardAddress] = ++s_nonceLoyaltyCard[loyaltyCardAddress];
 
         // Interact.
-        // 2) redeem loyalty voucher
-        LoyaltyGift(loyaltyGift).redeemLoyaltyVoucher(loyaltyCardAddress, loyaltyGiftId);
+        // 2) retrieve loyalty voucher
+        // refactor into MockLoyaltyGift(loyaltyGift).safeTransferFrom ? 
+        _safeTransferFrom(loyaltyCardAddress, s_owner, loyaltyGiftId, 1, "");
     }
 
     /**
@@ -507,7 +514,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
                 }
             }
             if (ids[i] != LOYALTY_POINTS_ID) {
-                if (s_LoyaltyCards[to] == 1) { // vouchers cannot be transferred to non-loyaltycards. 
+                if (s_LoyaltyCards[to] == 1) {
                     revert LoyaltyProgram__TransferDenied();
                 }
             }
@@ -583,7 +590,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
         return tokenBoundAccount;
     }
 
-    function getLoyaltyGiftsIsClaimable(address loyaltyGiftAddress, uint256 loyaltyGiftId)
+    function getLoyaltyGiftIsClaimable(address loyaltyGiftAddress, uint256 loyaltyGiftId)
         external
         view
         returns (uint256)
@@ -591,7 +598,7 @@ contract MockLoyaltyProgram is ERC1155, IERC1155Receiver { // removed: Reentranc
         return s_LoyaltyGiftsClaimable[loyaltyGiftAddress][loyaltyGiftId];
     }
 
-    function getLoyaltyGiftsIsRedeemable(address loyaltyGiftAddress, uint256 loyaltyGiftId)
+    function getLoyaltyGiftIsRedeemable(address loyaltyGiftAddress, uint256 loyaltyGiftId)
         external
         view
         returns (uint256)

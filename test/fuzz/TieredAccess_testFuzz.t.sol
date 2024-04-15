@@ -2,11 +2,11 @@
 pragma solidity 0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.t.sol";
+import {LoyaltyProgram} from "../mocks/LoyaltyProgram.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployTieredAccess} from "../../script/DeployTieredAccess.s.sol";
 import {TieredAccess} from "../../src/TieredAccess.sol";
-import {DeployMockLoyaltyProgram} from "../../script/DeployMockLoyaltyProgram.s.sol";
+import {DeployLoyaltyProgram} from "../../script/DeployLoyaltyProgram.s.sol";
 
 /**
  * @title Unit tests for LoyaltyGift Contract
@@ -35,7 +35,7 @@ contract TieredAccess_testFuzz is Test {
     uint256[] AMOUNT_NON_TOKENISED_TO_MINT = [1];
 
     LoyaltyGift loyaltyGift;
-    MockLoyaltyProgram loyaltyProgram; 
+    LoyaltyProgram loyaltyProgram; 
 
     modifier programHasBronzeSilverGoldTokens() { 
       uint256[] memory tokenIds = new uint256[](3); 
@@ -78,7 +78,7 @@ contract TieredAccess_testFuzz is Test {
         DeployTieredAccess giftDeployer = new DeployTieredAccess();
         loyaltyGift = giftDeployer.run();
 
-        DeployMockLoyaltyProgram programDeployer = new DeployMockLoyaltyProgram();
+        DeployLoyaltyProgram programDeployer = new DeployLoyaltyProgram();
         (loyaltyProgram, ) = programDeployer.run();
     }
 

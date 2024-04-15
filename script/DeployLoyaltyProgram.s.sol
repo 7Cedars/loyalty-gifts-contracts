@@ -2,17 +2,17 @@
 pragma solidity 0.8.24;
 
 import {Script} from "forge-std/Script.sol";
-import {MockLoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.t.sol";
+import {LoyaltyProgram} from "../test/mocks/LoyaltyProgram.t.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
-contract DeployMockLoyaltyProgram is Script {
-    MockLoyaltyProgram loyaltyProgram;
+contract DeployLoyaltyProgram is Script {
+    LoyaltyProgram loyaltyProgram;
 
     // NB: If I need a helper config, see helperConfig.s.sol + learning/foundry-fund-me-f23
- function run() external returns (MockLoyaltyProgram, HelperConfig) {
+ function run() external returns (LoyaltyProgram, HelperConfig) {
         HelperConfig helperConfig = new HelperConfig();
         string memory name = "Loyalty Program"; 
         string memory version = "1";
@@ -21,7 +21,7 @@ contract DeployMockLoyaltyProgram is Script {
             helperConfig.activeNetworkConfig();
 
         vm.startBroadcast();
-            loyaltyProgram = new MockLoyaltyProgram(
+            loyaltyProgram = new LoyaltyProgram(
             uri, 
             name,
             version,

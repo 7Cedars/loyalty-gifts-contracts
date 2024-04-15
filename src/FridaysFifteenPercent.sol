@@ -22,7 +22,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
  * @author Seven Cedars
  * @notice A concrete implementation of a loyalty Gift contract. This contract simply exchanges loyalty points for three types of gifts and three types of vouchers.
  * 
- * For a mock version of the LoyalProgram contract these gifts interact with, see the test/mocks/test/mocks/MockLoyaltyProgram.t.sol. 
+ * For a mock version of the LoyalProgram contract these gifts interact with, see the test/mocks/test/mocks/LoyaltyProgram.t.sol. 
  * 
  */
 
@@ -37,7 +37,7 @@ contract FridaysFifteenPercent is LoyaltyGift {
     uint256[] isClaimable = [1]; 
     uint256[] isVoucher = [0]; 
     uint256[] cost = [2500];
-    uint256[] hasAdditionalRequirements = [0];   
+    uint256[] hasAdditionalRequirements = [1];   
 
     /**
      * @notice constructor function: initiating loyalty gift contract. 

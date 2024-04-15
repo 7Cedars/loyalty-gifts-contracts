@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 // import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol"; // ERC165 not implemented for now. 
 // import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol"; // ERC165 not implemented for now. 
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import {MockLoyaltyProgram} from "../test/mocks/MockLoyaltyProgram.t.sol";
+import {LoyaltyProgram} from "../test/mocks/LoyaltyProgram.t.sol";
 import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
 
 /**
@@ -98,55 +98,12 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
             }
         unchecked { ++i; } 
         }
-        _mintBatch(msg.sender, loyaltyGiftIds, numberOfVouchers, ""); // emits batchtransfer event
-    }
-
-    /**
-     * @notice transfers loyalty voucher from loyalty Program to a loyaltyCard. 
-     * 
-     * @param loyaltyCard the address of the loyalty Card. 
-     * @param loyaltyGiftId the id of the voucher to be transferred. 
-     * 
-     * @dev Note that this function does NOT include a check on requirements - this HAS TO BE implemented on the side of the loyalty program contract.
-     * @dev same goes for payment in loyalty Points - not included here. 
-     * @dev also does not check if address is TBA / loyaltyCard -- done at safeTransferFrom. 
-     *
-     */
-    function issueLoyaltyVoucher(address loyaltyCard, uint256 loyaltyGiftId)
-        public virtual
-    {
-        if (s_isVoucher[loyaltyGiftId] == 0) {
-            revert LoyaltyGift__IsNotVoucher(address(this), loyaltyGiftId);
-        }
-
-        if (balanceOf(msg.sender, loyaltyGiftId) == 0) {
-            revert LoyaltyGift__NoVouchersAvailable(address(this));
-        }
-
-        safeTransferFrom(msg.sender, loyaltyCard, loyaltyGiftId, 1, "");
-    }
-
-    /**
-     * @notice transfers loyalty voucher from a loyaltyCard to a LoyaltyProgram. 
-     * 
-     * @param loyaltyCard the address of the loyalty Card. 
-     * @param loyaltyGiftId the id of the voucher to be transferred. 
-     * 
-     * @dev adds check if gift is actually tokenised.
-     * @dev It does NOT include a check on requirements - this HAS TO BE implemented on the side of the loyalty program contract.
-     * @dev also does not check if address is TBA / loyaltyCard -- see safeTransferFrom for this. 
-     */
-    function redeemLoyaltyVoucher(address loyaltyCard, uint256 loyaltyGiftId) public {
-        if (s_isVoucher[loyaltyGiftId] == 0) {
-            revert LoyaltyGift__IsNotVoucher(address(this), loyaltyGiftId);
-        }
-
-        _safeTransferFrom(loyaltyCard, msg.sender, loyaltyGiftId, 1, "");
+        _mintBatch(LoyaltyProgram(msg.sender).getOwner(), loyaltyGiftIds, numberOfVouchers, ""); // emits batchtransfer event
     }
 
     /* internal */
     /**
-     * @notice added checks to safeTransfer that ensure vouchers can only be transferred between Loyalty Cards and their Loyalty Program. 
+     * @notice added checks to safeTransfer that ensure vouchers can only be transferred between Loyalty Cards and Loyalty Program owner. 
      * 
      * @param from address from which voucher is send. 
      * @param to address at which voucher is received. 
@@ -162,13 +119,16 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
         virtual
         override
     {
+        address ownerProgram = LoyaltyProgram(msg.sender).getOwner(); 
+
         if (address(0) != from) {
-            if (msg.sender != to) {
-                try MockLoyaltyProgram(msg.sender).getBalanceLoyaltyCard(to) {}
+            if (ownerProgram != to) {
+                // check of address is loyalty card of selected program. 
+                try LoyaltyProgram(msg.sender).getBalanceLoyaltyCard(to) {}
                 catch { revert LoyaltyGift__TransferDenied(address(this)); }
             }
-            if (msg.sender != from) {
-                try MockLoyaltyProgram(msg.sender).getBalanceLoyaltyCard(from) {}
+            if (ownerProgram != from) {
+                try LoyaltyProgram(msg.sender).getBalanceLoyaltyCard(from) {}
                 catch { revert LoyaltyGift__TransferDenied(address(this)); }
             }
         } 

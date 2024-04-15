@@ -6,6 +6,7 @@ import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
 import {ERC1155} from "lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {LoyaltyProgram} from "../test/mocks/LoyaltyProgram.t.sol";
 
 /**
  * @dev THIS CONTRACT HAS NOT BEEN AUDITED. WORSE: TESTING IS INCOMPLETE. DO NOT DEPLOY ON ANYTHING ELSE THAN A TEST CHAIN! 
@@ -74,40 +75,29 @@ contract PointsForPseudoRaffle is LoyaltyGift {
     {
         if (loyaltyGiftId != 0) revert ("Invalid token");
         if (loyaltyPoints < cost[0]) revert ("Not enough points");
+
+        address ownerProgram = LoyaltyProgram(msg.sender).getOwner(); 
+        uint256 balanceVoucher1 = balanceOf(ownerProgram, 1); 
+        uint256 balanceVoucher2 = balanceOf(ownerProgram, 2); 
+        uint256 balanceVoucher3 = balanceOf(ownerProgram, 3); 
+        if (balanceVoucher1 + balanceVoucher2 + balanceVoucher3 == 0) {
+            revert LoyaltyGift__NoVouchersAvailable(address(this));
+        }
         
         bool check = super.requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, loyaltyPoints);
         return check;
     }
 
-    /** 
-     * @notice issues random voucher, overrides standard function in LoyaltyGift contract. 
-     * 
-     */
-    function issueLoyaltyVoucher(address loyaltyCard, uint256 /* loyaltyGiftId */)
-    public 
-    override 
-    {   
-        // better to do this with balanceOfBatch - but I run into odd out-of-bounds error. 
-        uint256 balanceVoucher1 = balanceOf(msg.sender, 1); 
-        uint256 balanceVoucher2 = balanceOf(msg.sender, 2); 
-        uint256 balanceVoucher3 = balanceOf(msg.sender, 3); 
+    function pseudoRandomVoucherId() private view returns (uint256 selectedId) {
+        address ownerProgram = LoyaltyProgram(msg.sender).getOwner(); 
+        uint256 balanceVoucher1 = balanceOf(ownerProgram, 1); 
+        uint256 balanceVoucher2 = balanceOf(ownerProgram, 2); 
+        uint256 balanceVoucher3 = balanceOf(ownerProgram, 3); 
 
-        if (balanceVoucher1 + balanceVoucher2 + balanceVoucher3 == 0) {
+        uint256 totalVouchers = balanceVoucher1 + balanceVoucher2 + balanceVoucher3; 
+        if (totalVouchers == 0) {
             revert LoyaltyGift__NoVouchersAvailable(address(this));
         }
-        
-        // @dev: selection of loyalty gift Id subject to availabilty vouchers. 
-        uint256 newLoyaltyGiftId = pseudoRandomNumber(
-            balanceVoucher1, 
-            balanceVoucher2, 
-            balanceVoucher3
-            ); 
-
-        safeTransferFrom(msg.sender, loyaltyCard, newLoyaltyGiftId, 1, "");
-    }
-
-    function pseudoRandomNumber(uint256 numberVouchers1, uint256 numberVouchers2, uint256 numberVouchers3) private view returns (uint256 selectedId) {
-        uint256 totalVouchers = numberVouchers1 + numberVouchers2 + numberVouchers3; 
 
         uint256 randomNumber = uint256(
             keccak256(abi.encodePacked(
@@ -117,10 +107,32 @@ contract PointsForPseudoRaffle is LoyaltyGift {
                 ))
             ) % totalVouchers; 
 
-        // test how / if this works when one or more vouchers has not been minted.. 
-        if (randomNumber < numberVouchers1) return 1;
-        if (randomNumber >= numberVouchers1 && randomNumber < (numberVouchers1 + numberVouchers2)) return 2;  
-        if (randomNumber >= (numberVouchers1 + numberVouchers2) ) return 3;  
-
+        if (randomNumber < balanceVoucher1) return 1;
+        if (randomNumber >= balanceVoucher1 && randomNumber < (balanceVoucher1 + balanceVoucher2)) return 2;  
+        if (randomNumber >= (balanceVoucher1 + balanceVoucher2) ) return 3;  
     }
+
+    /* internal */
+    /**
+     * @notice overrides transfer logic of LoyaltyGift so that when user request a token zero, what is transferred is a token 1, 2 or 3 - pseudo randomly. 
+     * 
+     * @param from address from which voucher is send. 
+     * @param to address at which voucher is received. 
+     * @param values array of amiount of vouchers sent per id.
+     * 
+     * @dev ids and values need to be array of same length.  
+     * @dev The check is ignored when vouchers are minted. It means any address can mint vouchers. But if they lack TBAs, addresses cannot do anything with these vouchers. 
+     * 
+     */
+    function _update(address from, address to, uint256[] memory /*  ids */, uint256[] memory values)
+        internal
+        virtual
+        override
+    {
+        uint256[] memory newIds = new uint256[](1); 
+        newIds[0] = pseudoRandomVoucherId(); 
+
+        super._update(from, to, newIds, values);
+    }
+
 }

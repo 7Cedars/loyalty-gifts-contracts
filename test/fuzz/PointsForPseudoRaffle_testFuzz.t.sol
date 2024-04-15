@@ -2,10 +2,10 @@
 pragma solidity 0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.t.sol";
+import {LoyaltyProgram} from "../mocks/LoyaltyProgram.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployPointsForPseudoRaffle} from "../../script/DeployPointsForPseudoRaffle.s.sol";
-import {DeployMockLoyaltyProgram} from "../../script/DeployMockLoyaltyProgram.s.sol";
+import {DeployLoyaltyProgram} from "../../script/DeployLoyaltyProgram.s.sol";
 import {PointsForPseudoRaffle} from "../../src/PointsForPseudoRaffle.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 
@@ -70,13 +70,13 @@ contract PointsForPseudoRaffle_testFuzz is Test {
     ///////////////////////////////////////////////
 
     LoyaltyGift loyaltyGift;
-    MockLoyaltyProgram loyaltyProgram; 
+    LoyaltyProgram loyaltyProgram; 
 
     function setUp() external {
         DeployPointsForPseudoRaffle giftDeployer = new DeployPointsForPseudoRaffle();
         loyaltyGift = giftDeployer.run();
 
-        DeployMockLoyaltyProgram programDeployer = new DeployMockLoyaltyProgram();
+        DeployLoyaltyProgram programDeployer = new DeployLoyaltyProgram();
         (loyaltyProgram, ) = programDeployer.run();
     }
 
@@ -112,7 +112,7 @@ contract PointsForPseudoRaffle_testFuzz is Test {
         // check 2: no correct token. 
         if (points >= 1250) { 
           vm.prank(address(loyaltyProgram));
-          loyaltyGift.issueLoyaltyVoucher(loyaltyCardAddress, 0); 
+          loyaltyGift.safeTransferFrom(loyaltyCardAddress, 0); 
 
           console.logUint(loyaltyGift.balanceOf(loyaltyCardAddress, 1)); 
           console.logUint(loyaltyGift.balanceOf(loyaltyCardAddress, 2)); 

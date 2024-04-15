@@ -2,12 +2,12 @@
 pragma solidity 0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {MockLoyaltyProgram} from "../mocks/MockLoyaltyProgram.t.sol";
+import {LoyaltyProgram} from "../mocks/LoyaltyProgram.t.sol";
 import {DateTime} from "../../src/DateTime.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployFridaysFifteenPercent} from "../../script/DeployFridaysFifteenPercent.s.sol";
 import {FridaysFifteenPercent} from "../../src/FridaysFifteenPercent.sol";
-import {DeployMockLoyaltyProgram} from "../../script/DeployMockLoyaltyProgram.s.sol";
+import {DeployLoyaltyProgram} from "../../script/DeployLoyaltyProgram.s.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 
 /**
@@ -35,13 +35,13 @@ contract FridaysFifteenPercent_testFuzz is Test {
     ///////////////////////////////////////////////
 
     LoyaltyGift loyaltyGift;
-    MockLoyaltyProgram loyaltyProgram; 
+    LoyaltyProgram loyaltyProgram; 
 
     function setUp() external {
         DeployFridaysFifteenPercent giftDeployer = new DeployFridaysFifteenPercent();
         loyaltyGift = giftDeployer.run();
 
-        DeployMockLoyaltyProgram programDeployer = new DeployMockLoyaltyProgram();
+        DeployLoyaltyProgram programDeployer = new DeployLoyaltyProgram();
         (loyaltyProgram, ) = programDeployer.run();
     }
 
