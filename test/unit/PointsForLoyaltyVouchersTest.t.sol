@@ -100,28 +100,5 @@ contract PointsForLoyaltyVouchersTest is Test {
     }
 
     // For further testing, see integration tests.
-
-
-
-    function testIssueVoucherRevertsForNonAvailableTokenisedGift() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(LoyaltyGift.LoyaltyGift__NoVouchersAvailable.selector, address(loyaltyGift))
-        );
-        loyaltyGift.issueLoyaltyVoucher(addressOne, 1);
-    }
-
-    ///////////////////////////////////////////////
-    ///    Reclaiming Tokens (vouchers)         ///
-    ///////////////////////////////////////////////
-    // function testRedeemRevertsForNonAvailableTokenisedGift() public {
-    //     vm.expectRevert(
-    //         abi.encodeWithSelector(
-    //             LoyaltyGift.LoyaltyGift__NotTokenised.selector, address(loyaltyGift), NON_TOKENISED_TO_MINT[0]
-    //         )
-    //     );
-    //     vm.prank(addressZero);
-    //     loyaltyGift.redeemLoyaltyVoucher(address(0), NON_TOKENISED_TO_MINT[0]);
-    // }
-
    
 }

@@ -62,19 +62,4 @@ contract PointsForLoyaltyGiftsTest is Test {
         assertEq(result, true);
     }
 
-    ///////////////////////////////////////////////
-    ///    Reclaiming Tokens (vouchers)         ///
-    ///////////////////////////////////////////////
-    function testRedeemRevertsForNonAvailableTokenisedGift() public {
-        uint256 nonVoucherId = 0; 
-
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                LoyaltyGift.LoyaltyGift__IsNotVoucher.selector, address(loyaltyGift), nonVoucherId
-            )
-        );
-        vm.prank(addressZero);
-        loyaltyGift.redeemLoyaltyVoucher(address(0), nonVoucherId);
-    }
-
 }

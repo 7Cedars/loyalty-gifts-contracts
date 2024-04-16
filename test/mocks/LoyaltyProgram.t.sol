@@ -16,6 +16,7 @@ import {ERC6551Registry} from "./ERC6551Registry.t.sol";
 import {MockLoyaltyCard6551Account} from "./MockLoyaltyCard6551Account.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 
+
 /**
  * @dev THIS CONTRACT HAS NOT BEEN AUDITED. WORSE: TESTING IS INCOMPLETE. DO NOT DEPLOY ON ANYTHING ELSE THAN A TEST CHAIN! 
  * 
@@ -74,7 +75,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     error LoyaltyProgram__RequestInvalid();
     error LoyaltyProgram__LoyaltyGiftInvalid();
     error LoyaltyProgram__LoyaltyVoucherInvalid();
-    error LoyaltyProgram__RequirementsGiftNotMet();
+    error LoyaltyProgram__RequirementsGiftNotMet(); 
     error LoyaltyProgram__IncorrectInterface(address loyaltyGift, bytes4 interfaceId);
 
     /* Type declarations */
@@ -291,15 +292,15 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     }
 
     /**
-     * @dev mint loyaltyGifts at external loyaltyGift contract.
+     * @notice mint loyaltyGifts at external loyaltyGift contract.
      * @param loyaltyGiftAddress address of loyalty gift contract.
      * @param numberOfVouchers amount of vouchers to be minted.
      *
-     * @notice the limit of loyalty vouchers that customers can be gifted is limited by the amount of vouchers minted by the owner of loyalty program.
-     * @notice only owner can remove contracts from whitelist.
+     * @dev the limit of loyalty vouchers that customers can be gifted is limited by the amount of vouchers minted by the owner of loyalty program.
+     * @dev only owner can remove contracts from whitelist.
      *
      * - emits transferSingle event when one vouchers is minted.
-     * - emits transferBatch when more vouchers are minted?
+     * - emits transferBatch when more vouchers are minted
      */
     function mintLoyaltyVouchers(
         address loyaltyGiftAddress,
@@ -307,6 +308,24 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         uint256[] memory numberOfVouchers
     ) public onlyOwner {
         LoyaltyGift(loyaltyGiftAddress).mintLoyaltyVouchers(loyaltyGiftIds, numberOfVouchers);
+    }
+
+    /**
+     * @notice transfer voucher between owner and/or among loyalty cards - bypassing any (requirement) checks
+     * @param to todo 
+     * @param loyaltyGiftId todo 
+     *
+     * @dev anyone can call this function; but will bounce (due to safeTransferFrom being called) when not owner of voucher.
+     *
+     * - emits transferSingle event.
+     */
+    function transferLoyaltyVoucher(
+        address from,
+        address to,
+        uint256 loyaltyGiftId, 
+        address loyaltyGiftAddress
+    ) public {
+        LoyaltyGift(loyaltyGiftAddress).safeTransferFrom(from, to, loyaltyGiftId, 1, "");
     }
 
     /**
@@ -376,11 +395,9 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         }
 
         // check if requirements are met.
-        if (LoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(loyaltyCardAddress, loyaltyGiftId, loyaltyPoints)) {
+        if (ILoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(loyaltyCardAddress, loyaltyGiftId, loyaltyPoints)) {
             revert LoyaltyProgram__RequirementsGiftNotMet();
         }
-
-        // £todo: should I not check here if requirements are met?! 
 
         // Effect.
         // 1) set executed to true..
@@ -393,8 +410,8 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         _safeTransferFrom(loyaltyCardAddress, s_owner, 0, loyaltyPoints, "");
         // and 4), if gift is tokenised, transfer voucher.
         if (LoyaltyGift(loyaltyGiftAddress).getIsVoucher(loyaltyGiftId) == 1) {
-            // refactor into MockLoyaltyGift(loyaltyGift)._safeTransferFrom ? 
-            safeTransferFrom(s_owner, loyaltyCardAddress, loyaltyGiftId, 1, "");
+            // refactor into LoyaltyGift(loyaltyGift)._safeTransferFrom ? 
+            transferLoyaltyVoucher(s_owner, loyaltyCardAddress, loyaltyGiftId, loyaltyGiftAddress); 
         }
     }
 
@@ -403,7 +420,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
      * @notice redeems loyaltyVoucher for loyalty Gift by calling external contract, using a signed message from customer.
      *
      * @param _voucher description of gift voucher. 
-     * @param loyaltyGift address of loyalty gift to claim
+     * @param loyaltyGiftAddress address of loyalty gift to claim
      * @param loyaltyGiftId id of loyalty gift to claim 
      * @param loyaltyCardId id of loyalty card whose points are used to claim gift. 
      * @param customerAddress address of customer that makes the claim. 
@@ -418,7 +435,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
      */
     function redeemLoyaltyVoucher(
         string memory _voucher,
-        address loyaltyGift,
+        address loyaltyGiftAddress,
         uint256 loyaltyGiftId,
         uint256 loyaltyCardId,
         address customerAddress,
@@ -456,7 +473,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         }
 
         // check if loyalty Voucher is valid.
-        if (s_LoyaltyVouchersRedeemable[loyaltyGift][loyaltyGiftId] == 0) {
+        if (s_LoyaltyVouchersRedeemable[loyaltyGiftAddress][loyaltyGiftId] == 0) {
             revert LoyaltyProgram__LoyaltyVoucherInvalid();
         }
 
@@ -467,8 +484,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
 
         // Interact.
         // 2) retrieve loyalty voucher
-        // refactor into MockLoyaltyGift(loyaltyGift).safeTransferFrom ? 
-        _safeTransferFrom(loyaltyCardAddress, s_owner, loyaltyGiftId, 1, "");
+        transferLoyaltyVoucher(loyaltyCardAddress, s_owner, loyaltyGiftId, loyaltyGiftAddress); 
     }
 
     /**

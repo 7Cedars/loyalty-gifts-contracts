@@ -38,22 +38,19 @@ contract TieredAccess_testFuzz is Test {
     LoyaltyProgram loyaltyProgram; 
 
     modifier programHasBronzeSilverGoldTokens() { 
-      uint256[] memory tokenIds = new uint256[](3); 
-      tokenIds[0] = 0; tokenIds[1] = 1; tokenIds[2] = 2; 
-      uint256[] memory numberOfTokens = new uint256[](3); 
-      numberOfTokens[0] = 3; numberOfTokens[1] = 3; numberOfTokens[2] = 3; 
+      uint256[] memory voucherIds = new uint256[](3); 
+      voucherIds[0] = 0; voucherIds[1] = 1; voucherIds[2] = 2; 
+      uint256[] memory numberOfVouchers = new uint256[](3); 
+      numberOfVouchers[0] = 3; numberOfVouchers[1] = 3; numberOfVouchers[2] = 3; 
       address ownerProgram = loyaltyProgram.getOwner(); 
 
       // step 1a: owner mints cards, points. (points are owned by EOA)
       vm.startPrank(ownerProgram);
       loyaltyProgram.mintLoyaltyCards(5); 
       loyaltyProgram.mintLoyaltyPoints(250_000_000); 
+      loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherIds, numberOfVouchers); 
       vm.stopPrank();
-
-      // step 1b: program mints vouchers. (vouchers are owned by loyalty Program contract)
-      vm.prank(address(loyaltyProgram)); 
-      loyaltyGift.mintLoyaltyVouchers(tokenIds, numberOfTokens); 
-      
+            
       // step 2: get address of TBA of card no 1. 
       address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1); 
 
@@ -95,15 +92,19 @@ contract TieredAccess_testFuzz is Test {
         points = bound(points, 0, 100_000); 
         tokenId = bound(tokenId, 0, 3); 
         address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1);
+        address ownerProgram = loyaltyProgram.getOwner(); 
 
         // act
-        // if tokenId = 3, no (bronze, silver or gold) token will be transferred. 
+        // if tokenId = 3, no token will be transferred at all. 
+        // if tokenId != 3, selected token will be transferred. 
         if (tokenId != 3) {
-          vm.prank(address(loyaltyProgram)); 
+          vm.prank(ownerProgram); 
           loyaltyGift.safeTransferFrom(
-            address(loyaltyProgram), 
+            ownerProgram, 
             loyaltyCardAddress, 
-            tokenId, 1, ""
+            tokenId, 
+            1, 
+            ""
             );
         }
         

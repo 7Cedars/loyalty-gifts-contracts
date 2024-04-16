@@ -88,6 +88,13 @@ contract PointsForPseudoRaffle is LoyaltyGift {
         return check;
     }
 
+    /**
+     * @notice A pseudo randomiser that weighs output according to number of raffle gifts that have been minted. 
+     * 
+     * @dev note that this randomised uses block.number and block.timestamp as pseudo random input. These are easily played / not properly random. 
+     * @dev To make this properly random a oracle needs to be used - for instance chainlink vrf. A properly random version is coming soon.   
+     *  
+     */
     function pseudoRandomVoucherId() private view returns (uint256 selectedId) {
         address ownerProgram = LoyaltyProgram(msg.sender).getOwner(); 
         uint256 balanceVoucher1 = balanceOf(ownerProgram, 1); 
@@ -114,7 +121,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
 
     /* internal */
     /**
-     * @notice overrides transfer logic of LoyaltyGift so that when user request a token zero, what is transferred is a token 1, 2 or 3 - pseudo randomly. 
+     * @notice overrides transfer logic of LoyaltyGift so that when user transfers a token zero, what is transferred is actually a token 1, 2 or 3 - pseudo randomly. 
      * 
      * @param from address from which voucher is send. 
      * @param to address at which voucher is received. 
@@ -124,15 +131,18 @@ contract PointsForPseudoRaffle is LoyaltyGift {
      * @dev The check is ignored when vouchers are minted. It means any address can mint vouchers. But if they lack TBAs, addresses cannot do anything with these vouchers. 
      * 
      */
-    function _update(address from, address to, uint256[] memory /*  ids */, uint256[] memory values)
+    function _update(address from, address to, uint256[] memory ids, uint256[] memory values)
         internal
         virtual
         override
     {
-        uint256[] memory newIds = new uint256[](1); 
-        newIds[0] = pseudoRandomVoucherId(); 
+        // in any transfer when gift 0 is transferred, a random gift (1, 2, or 3) is actually sent. 
+        for (uint256 i; i < ids.length;) {
+            if (ids[i] == 0) ids[i] = pseudoRandomVoucherId(); 
+            unchecked { ++i; }
+        }
 
-        super._update(from, to, newIds, values);
+        super._update(from, to, ids, values);
     }
 
 }

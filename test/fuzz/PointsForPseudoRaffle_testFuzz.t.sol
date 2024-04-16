@@ -94,7 +94,7 @@ contract PointsForPseudoRaffle_testFuzz is Test {
         timestamp = bound(timestamp, 1, 2500000000);
         blocknumber = bound(blocknumber, 1, 1500000);
         address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1);
-        // address ownerProgram = loyaltyProgram.getOwner(); 
+        address ownerProgram = loyaltyProgram.getOwner(); 
         
         // act
         vm.warp(timestamp);
@@ -112,11 +112,17 @@ contract PointsForPseudoRaffle_testFuzz is Test {
         // check 2: no correct token. 
         if (points >= 1250) { 
           vm.prank(address(loyaltyProgram));
-          loyaltyGift.safeTransferFrom(loyaltyCardAddress, 0); 
+          loyaltyGift.safeTransferFrom(
+            ownerProgram,
+            loyaltyCardAddress,
+            0,
+            1,
+            ""
+            ); 
 
-          console.logUint(loyaltyGift.balanceOf(loyaltyCardAddress, 1)); 
-          console.logUint(loyaltyGift.balanceOf(loyaltyCardAddress, 2)); 
-          console.logUint(loyaltyGift.balanceOf(loyaltyCardAddress, 3)); 
+          console.log("Gift1:", loyaltyGift.balanceOf(loyaltyCardAddress, 1)); 
+          console.log("Gift2:", loyaltyGift.balanceOf(loyaltyCardAddress, 2)); 
+          console.log("Gift3:", loyaltyGift.balanceOf(loyaltyCardAddress, 3)); 
 
           // £check I would like to test for distribution here. But don't think it is 
           // possible in stateless fuzz test. 

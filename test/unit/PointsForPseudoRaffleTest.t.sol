@@ -94,25 +94,17 @@ contract PointsForPseudoRaffleTest is Test {
     }
 
     ///////////////////////////////////////////////
-    ///         Random Issuing Voucher          ///
+    ///       Random Transferring Voucher       ///
     ///////////////////////////////////////////////
-    function testNoVoucherMeansIssueVouchersReverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                LoyaltyGift.LoyaltyGift__NoVouchersAvailable.selector, address(loyaltyGift)
-            )
-        );  
-        vm.prank(addressZero);
-        loyaltyGift.issueLoyaltyVoucher(addressOne, 1); 
-    }
 
-    function testOneVoucherMeansIssueVouchersIsDeterminate() public {
+    function testOneVoucherMeansTransferVouchersIsDeterminate() public {
         uint256[] memory giftId = new uint256[](1); 
         giftId[0] = 0; 
         uint256[] memory voucherId = new uint256[](1); 
         voucherId[0] = 2; 
         uint256[] memory numberOfVouchers = new uint256[](1); 
         numberOfVouchers[0] = 25;
+        uint256[] memory transferGift0 = new uint256[](10); // initiates to 0s... 
         address ownerProgram = loyaltyProgram.getOwner(); 
 
         // step 1: owner mints cards and points. 
@@ -133,25 +125,31 @@ contract PointsForPseudoRaffleTest is Test {
             ownerProgram, addressZero, 1, 1, ""
         );
 
-        // step 3b: owner adds raffle as loyalty gift & mints vouchers
+        // step 3b: owner adds raffle as loyalty gift & mints vouchers 
         loyaltyProgram.addLoyaltyGift(address(loyaltyGift), giftId[0]); 
         loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherId, numberOfVouchers);
+
+        // step 4: calls transfer on gift0 ten times: 
+        loyaltyGift.safeTransferFrom(
+            ownerProgram, 
+            loyaltyCardAddress, 
+            2, 
+            1, 
+            ""
+        ); 
         vm.stopPrank();
 
-        // step 4: loyaltyProgram calls raffle giftId 0 -> the available vouchers should be issued  . 
-        vm.prank(address(loyaltyProgram));
-        loyaltyGift.issueLoyaltyVoucher(loyaltyCardAddress, giftId[0]); 
-        
-        assertEq(loyaltyGift.balanceOf(loyaltyCardAddress, voucherId[0]), 1);
+        assertEq(loyaltyGift.balanceOf(loyaltyCardAddress, voucherId[0]), transferGift0.length);
     }
 
-    function testIssueVouchersFallsWithinRange() public {
+    function testTransferVouchersFallsWithinRange() public {
         uint256[] memory giftId = new uint256[](1); 
         giftId[0] = 0; 
         uint256[] memory voucherIds = new uint256[](3); 
         voucherIds[0] = 1; voucherIds[1] = 2; voucherIds[2] = 3; 
         uint256[] memory numberOfVouchers = new uint256[](3); 
         numberOfVouchers[0] = 5; numberOfVouchers[1] = 25; numberOfVouchers[2] = 50;
+        uint256[] memory transferGift0 = new uint256[](10); // initiates to 0s... 
         address ownerProgram = loyaltyProgram.getOwner(); 
 
         // step 1: owner mints cards and points. 
@@ -175,18 +173,30 @@ contract PointsForPseudoRaffleTest is Test {
         // step 3b: owner adds raffle as loyalty gift & mints vouchers
         loyaltyProgram.addLoyaltyGift(address(loyaltyGift), giftId[0]); 
         loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherIds, numberOfVouchers);
+
+        // step 4: calls transfer on gift0 ten times: 
+        loyaltyGift.safeTransferFrom(
+            ownerProgram, 
+            loyaltyCardAddress, 
+            0, 
+            1, 
+            ""
+        ); 
         vm.stopPrank();
 
-        // step 4: loyaltyProgram calls raffle giftId 0 -> the available vouchers should be issued  . 
-        vm.prank(address(loyaltyProgram));
-        loyaltyGift.issueLoyaltyVoucher(loyaltyCardAddress, giftId[0]); 
+        for (uint256 i; i < voucherIds.length;) {
+            console.log("balance of voucher", i, ":", loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[0]));  
+        unchecked { ++i; } 
+        }
         
         assertEq(
             loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[0]) + 
             loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[1]) + 
             loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[2]), 
-            1);
+            transferGift0.length);
     }
     // all other tests (including for the pseudoRandomNumber function) can be found in fuzz test folder. 
+
+
 
 }
