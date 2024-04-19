@@ -118,6 +118,42 @@ contract PointsForPseudoRaffleTest is Test {
         assertEq(result, true);
     }
 
+    ////////////////////////////////////////////
+    ///       adjusted balanceOf             ///
+    ////////////////////////////////////////////
+    function testBalanceOfVoucher0ReturnsSumVouchers1_2_3() public {
+        uint256[] memory voucherIds = new uint256[](3); 
+        voucherIds[0] = 1; voucherIds[1] = 2; voucherIds[2] = 3; 
+        uint256[] memory numberOfVouchers = new uint256[](3); 
+        numberOfVouchers[0] = 3; numberOfVouchers[1] = 5; numberOfVouchers[2] = 7;
+        address programOwner = loyaltyProgram.getOwner(); 
+
+        vm.prank(programOwner); 
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherIds, numberOfVouchers);
+
+        console.log("balance voucher 1:", loyaltyGift.balanceOf(programOwner, 1)); 
+        console.log("balance voucher 2:", loyaltyGift.balanceOf(programOwner, 2)); 
+        console.log("balance voucher 3:", loyaltyGift.balanceOf(programOwner, 3)); 
+
+        assertEq(
+            loyaltyGift.balanceOf(programOwner, 0), 
+            numberOfVouchers[0] + numberOfVouchers[1] + numberOfVouchers[2] 
+            );
+    }
+
+    function testMintingVoucher0Reverts() public {
+        uint256[] memory voucherIds = new uint256[](1); 
+        voucherIds[0] = 0; 
+        uint256[] memory numberOfVouchers = new uint256[](1); 
+        numberOfVouchers[0] = 25;
+        address programOwner = loyaltyProgram.getOwner(); 
+
+        vm.expectRevert(); 
+        vm.prank(programOwner); 
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherIds, numberOfVouchers);
+    }
+
+
     ///////////////////////////////////////////////
     ///       Random Transferring Voucher       ///
     ///////////////////////////////////////////////
@@ -215,6 +251,8 @@ contract PointsForPseudoRaffleTest is Test {
             loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[2]), 
             numberOfTransfers);
     }
+
+
     // all other tests (including for the pseudoRandomNumber function) can be found in fuzz test folder. 
 
 

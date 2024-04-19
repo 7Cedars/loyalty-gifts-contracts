@@ -36,7 +36,7 @@ contract PointsForPseudoRaffle_testFuzz is Test {
       uint256[] memory voucherIds = new uint256[](3); 
       voucherIds[0] = 1; voucherIds[1] = 2; voucherIds[2] = 3; 
       uint256[] memory numberOfVouchers = new uint256[](3); 
-      numberOfVouchers[0] = 15; numberOfVouchers[1] = 25; numberOfVouchers[2] = 35;
+      numberOfVouchers[0] = 50; numberOfVouchers[1] = 25; numberOfVouchers[2] = 1;
       address ownerProgram = loyaltyProgram.getOwner(); 
 
       // step 1: owner mints cards and points. 
@@ -112,20 +112,17 @@ contract PointsForPseudoRaffle_testFuzz is Test {
         // check 2: no correct token. 
         if (points >= 1250) { 
           vm.prank(address(loyaltyProgram));
-          loyaltyGift.safeTransferFrom(
-            ownerProgram,
-            loyaltyCardAddress,
-            0,
-            1,
-            ""
+          loyaltyProgram.transferLoyaltyVoucher(
+                ownerProgram, 
+                loyaltyCardAddress, 
+                0, 
+                address(loyaltyGift)
             ); 
 
           console.log("Gift1:", loyaltyGift.balanceOf(loyaltyCardAddress, 1)); 
           console.log("Gift2:", loyaltyGift.balanceOf(loyaltyCardAddress, 2)); 
           console.log("Gift3:", loyaltyGift.balanceOf(loyaltyCardAddress, 3)); 
 
-          // £check I would like to test for distribution here. But don't think it is 
-          // possible in stateless fuzz test. 
           assertEq(
             loyaltyGift.balanceOf(loyaltyCardAddress, 1) + 
             loyaltyGift.balanceOf(loyaltyCardAddress, 2) + 

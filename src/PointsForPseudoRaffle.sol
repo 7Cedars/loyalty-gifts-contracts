@@ -65,7 +65,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
                 balanceOf(account, 2) + 
                 balanceOf(account, 3);  
         } 
-        super.balanceOf(account, id); 
+        return super.balanceOf(account, id); 
     }
 
         /**

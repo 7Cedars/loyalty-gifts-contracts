@@ -122,6 +122,6 @@ anvilDeployGifts:
 	@forge script script/DeployTieredAccess.s.sol:DeployTieredAccess $(ANVIL_ARGS_0)
 
 anvilTest:
-	@forge test $(ANVIL_TEST_ARGS)
+	@forge test --match-test testFuzz_rafflePseudoRandomlyDistributesGifts $(ANVIL_TEST_ARGS) -vvvv 
 
 
