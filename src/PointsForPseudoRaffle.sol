@@ -4,6 +4,7 @@ pragma solidity 0.8.24;
 import {LoyaltyGift} from "./LoyaltyGift.sol";
 import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
 import {ERC1155} from "lib/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol";
+import {IERC1155} from "lib/openzeppelin-contracts/contracts/token/ERC1155/IERC1155.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {LoyaltyProgram} from "../test/mocks/LoyaltyProgram.t.sol";
@@ -29,19 +30,10 @@ contract PointsForPseudoRaffle is LoyaltyGift {
     @param hasAdditionalRequirements =>  Are their additional requirements? 
     */
     uint256[] isClaimable = [1, 0, 0, 0]; 
-    uint256[] isVoucher = [0, 1, 1, 1]; 
+    uint256[] isVoucher = [1, 1, 1, 1]; 
     uint256[] cost = [1250, 0, 0, 0];
     uint256[] hasAdditionalRequirements = [0, 0, 0, 0];
-
-    address[] public msgAddressess; 
-    uint256[] public giftIndices; 
-
-    // uint256[] public balanceVouchers = balanceOfBatch(
-    //         [msg.sender, msg.sender, msg.sender], 
-    //         [1, 2, 3]
-    //         );
-
-
+    
     /**
      * @notice constructor function: initiating loyalty gift contract. 
      * 
@@ -58,6 +50,25 @@ contract PointsForPseudoRaffle is LoyaltyGift {
     {}
 
     /**
+     * @notice when requesting balance of token 0, return the sum of tokens 1, 2 and 3.  
+     * 
+     * @param account requested account of balance
+     * @param id token id. 
+     * 
+     * @dev Note that this does mean that token 0 cannot be minted. But if minted, it will not show up in balance (nor will it ever be transferred): the tokens / vouchers minted are lost. 
+     *  
+     */
+    function balanceOf(address account, uint256 id) public view virtual override (ERC1155, IERC1155) returns (uint256) {
+        if (id == 0) {
+            return 
+                balanceOf(account, 1) + 
+                balanceOf(account, 2) + 
+                balanceOf(account, 3);  
+        } 
+        super.balanceOf(account, id); 
+    }
+
+        /**
      * @notice Sets requirement logics of tokens. Overrides function from the standard LoyaltyGift contract.
      * 
      * @param loyaltyCard loyalty card from which request is send. 
@@ -80,8 +91,9 @@ contract PointsForPseudoRaffle is LoyaltyGift {
         uint256 balanceVoucher1 = balanceOf(ownerProgram, 1); 
         uint256 balanceVoucher2 = balanceOf(ownerProgram, 2); 
         uint256 balanceVoucher3 = balanceOf(ownerProgram, 3); 
-        if (balanceVoucher1 + balanceVoucher2 + balanceVoucher3 == 0) {
-            revert LoyaltyGift__NoVouchersAvailable(address(this));
+
+        if (balanceVoucher1 + balanceVoucher2 + balanceVoucher3 == 0) { // notice that (balanceOf(ownerProgram, 0) returns sum of vouchers [0, 1, 2] minted. See override function balanceOf below. 
+            revert ("No vouchers available");
         }
         
         bool check = super.requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, loyaltyPoints);
@@ -136,7 +148,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
         virtual
         override
     {
-        // in any transfer when gift 0 is transferred, a random gift (1, 2, or 3) is actually sent. 
+        // when voucher 0 is transferred, a pseudo random voucher (1, 2, or 3) is sent. 
         for (uint256 i; i < ids.length;) {
             if (ids[i] == 0) ids[i] = pseudoRandomVoucherId(); 
             unchecked { ++i; }

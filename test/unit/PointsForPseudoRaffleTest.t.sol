@@ -75,11 +75,27 @@ contract PointsForPseudoRaffleTest is Test {
         loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 2, 3000);
     }
 
-    function testRequirementPassessWithZeroGiftId() public {   
-        vm.prank(addressZero);
+    function testRequirementPassessWithZeroGiftIdAndVouchersMinted() public { 
+        uint256[] memory voucherIds = new uint256[](3); 
+        voucherIds[0] = 1; voucherIds[1] = 2; voucherIds[2] = 3; 
+        uint256[] memory numberOfVouchers = new uint256[](3); 
+        numberOfVouchers[0] = 5; numberOfVouchers[1] = 5; numberOfVouchers[2] = 5;
+        address programOwner = loyaltyProgram.getOwner(); 
+
+        vm.prank(programOwner); 
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherIds, numberOfVouchers);
+
+        vm.prank(address(loyaltyProgram));
         bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 3000);
         assertEq(result, true);
     }
+
+    function testRequirementFailsWithNoVouchers1_2_3Minted() public {
+        vm.expectRevert("No vouchers available");   
+        vm.prank(address(loyaltyProgram));
+        loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 3000);
+    }
+
 
     function testRequirementRevertsWithInsufficientPoints() public {
         vm.expectRevert("Not enough points");   
@@ -87,8 +103,17 @@ contract PointsForPseudoRaffleTest is Test {
         loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 1000);
     }
 
-    function testRequirementPassessWithSufficientPoints() public {   
-        vm.prank(addressZero);
+    function testRequirementPassessWithSufficientPointsAndVouchers() public {           
+        uint256[] memory voucherIds = new uint256[](3); 
+        voucherIds[0] = 1; voucherIds[1] = 2; voucherIds[2] = 3; 
+        uint256[] memory numberOfVouchers = new uint256[](3); 
+        numberOfVouchers[0] = 5; numberOfVouchers[1] = 5; numberOfVouchers[2] = 5;
+        address programOwner = loyaltyProgram.getOwner(); 
+
+        vm.prank(programOwner); 
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherIds, numberOfVouchers);
+
+        vm.prank(address(loyaltyProgram));
         bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 1250);
         assertEq(result, true);
     }
@@ -104,7 +129,7 @@ contract PointsForPseudoRaffleTest is Test {
         voucherId[0] = 2; 
         uint256[] memory numberOfVouchers = new uint256[](1); 
         numberOfVouchers[0] = 25;
-        uint256[] memory transferGift0 = new uint256[](10); // initiates to 0s... 
+        uint256 numberOfTransfers = 10; 
         address ownerProgram = loyaltyProgram.getOwner(); 
 
         // step 1: owner mints cards and points. 
@@ -130,16 +155,16 @@ contract PointsForPseudoRaffleTest is Test {
         loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherId, numberOfVouchers);
 
         // step 4: calls transfer on gift0 ten times: 
-        loyaltyGift.safeTransferFrom(
-            ownerProgram, 
-            loyaltyCardAddress, 
-            2, 
-            1, 
-            ""
-        ); 
+        for (uint256 i; i < numberOfTransfers; i++)
+            loyaltyProgram.transferLoyaltyVoucher(
+                ownerProgram, 
+                loyaltyCardAddress, 
+                0, 
+                address(loyaltyGift)
+            ); 
         vm.stopPrank();
 
-        assertEq(loyaltyGift.balanceOf(loyaltyCardAddress, voucherId[0]), transferGift0.length);
+        assertEq(loyaltyGift.balanceOf(loyaltyCardAddress, voucherId[0]), numberOfTransfers);
     }
 
     function testTransferVouchersFallsWithinRange() public {
@@ -149,7 +174,7 @@ contract PointsForPseudoRaffleTest is Test {
         voucherIds[0] = 1; voucherIds[1] = 2; voucherIds[2] = 3; 
         uint256[] memory numberOfVouchers = new uint256[](3); 
         numberOfVouchers[0] = 5; numberOfVouchers[1] = 25; numberOfVouchers[2] = 50;
-        uint256[] memory transferGift0 = new uint256[](10); // initiates to 0s... 
+        uint256 numberOfTransfers = 40; 
         address ownerProgram = loyaltyProgram.getOwner(); 
 
         // step 1: owner mints cards and points. 
@@ -175,25 +200,20 @@ contract PointsForPseudoRaffleTest is Test {
         loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherIds, numberOfVouchers);
 
         // step 4: calls transfer on gift0 ten times: 
-        loyaltyGift.safeTransferFrom(
-            ownerProgram, 
-            loyaltyCardAddress, 
-            0, 
-            1, 
-            ""
-        ); 
+        for (uint256 i; i < numberOfTransfers; i++)
+            loyaltyProgram.transferLoyaltyVoucher(
+                ownerProgram, 
+                loyaltyCardAddress, 
+                0, 
+                address(loyaltyGift)
+            ); 
         vm.stopPrank();
-
-        for (uint256 i; i < voucherIds.length;) {
-            console.log("balance of voucher", i, ":", loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[0]));  
-        unchecked { ++i; } 
-        }
         
         assertEq(
             loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[0]) + 
             loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[1]) + 
             loyaltyGift.balanceOf(loyaltyCardAddress, voucherIds[2]), 
-            transferGift0.length);
+            numberOfTransfers);
     }
     // all other tests (including for the pseudoRandomNumber function) can be found in fuzz test folder. 
 

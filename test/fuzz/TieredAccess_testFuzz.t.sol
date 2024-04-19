@@ -99,13 +99,12 @@ contract TieredAccess_testFuzz is Test {
         // if tokenId != 3, selected token will be transferred. 
         if (tokenId != 3) {
           vm.prank(ownerProgram); 
-          loyaltyGift.safeTransferFrom(
+          loyaltyProgram.transferLoyaltyVoucher(
             ownerProgram, 
             loyaltyCardAddress, 
             tokenId, 
-            1, 
-            ""
-            );
+            address(loyaltyGift)
+          ); 
         }
         
         //checks 
@@ -143,16 +142,18 @@ contract TieredAccess_testFuzz is Test {
         points = bound(points, 0, 100_000); 
         tokenId = bound(tokenId, 0, 3); 
         address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1);
+        address ownerProgram = loyaltyProgram.getOwner(); 
 
         // act
         // if tokenId = 3, no (bronze, silver or gold) token will be transferred. 
         if (tokenId != 3) {
-          vm.prank(address(loyaltyProgram)); 
-          loyaltyGift.safeTransferFrom(
-            address(loyaltyProgram), 
+          vm.prank(ownerProgram); 
+          loyaltyProgram.transferLoyaltyVoucher(
+            ownerProgram, 
             loyaltyCardAddress, 
-            tokenId, 1, ""
-            );
+            tokenId, 
+            address(loyaltyGift)
+          ); 
         }
         
         //checks 
@@ -190,16 +191,18 @@ contract TieredAccess_testFuzz is Test {
         points = bound(points, 0, 100_000); 
         tokenId = bound(tokenId, 0, 3); 
         address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1);
+        address ownerProgram = loyaltyProgram.getOwner(); 
 
         // act
         // if tokenId = 3, no (bronze, silver or gold) token will be transferred. 
-        if (tokenId != 3) {
-          vm.prank(address(loyaltyProgram)); 
-          loyaltyGift.safeTransferFrom(
-            address(loyaltyProgram), 
+         if (tokenId != 3) {
+          vm.prank(ownerProgram); 
+          loyaltyProgram.transferLoyaltyVoucher(
+            ownerProgram, 
             loyaltyCardAddress, 
-            tokenId, 1, ""
-            );
+            tokenId, 
+            address(loyaltyGift)
+          ); 
         }
         
         //checks 

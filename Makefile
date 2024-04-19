@@ -112,6 +112,7 @@ mumbaiForkedDeploy:
 #     Local testnet							 #
 ##################################
 ANVIL_ARGS_0 := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY_0) --broadcast
+ANVIL_TEST_ARGS := --rpc-url http://localhost:8545
 
 anvilDeployGifts:
 	@forge script script/DeployFridaysFifteenPercent.s.sol:DeployFridaysFifteenPercent $(ANVIL_ARGS_0)
@@ -120,5 +121,7 @@ anvilDeployGifts:
 	@forge script script/DeployPointsForPseudoRaffle.s.sol:DeployPointsForPseudoRaffle $(ANVIL_ARGS_0)
 	@forge script script/DeployTieredAccess.s.sol:DeployTieredAccess $(ANVIL_ARGS_0)
 
+anvilTest:
+	@forge test $(ANVIL_TEST_ARGS)
 
 

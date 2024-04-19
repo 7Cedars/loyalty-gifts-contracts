@@ -5,6 +5,7 @@ import {Test, console} from "forge-std/Test.sol";
 import {LoyaltyProgram} from "../mocks/LoyaltyProgram.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployPointsForLoyaltyVouchers} from "../../script/DeployPointsForLoyaltyVouchers.s.sol";
+import {DeployLoyaltyProgram} from "../../script/DeployLoyaltyProgram.s.sol";
 import {PointsForLoyaltyVouchers} from "../../src/PointsForLoyaltyVouchers.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 
@@ -40,10 +41,15 @@ contract PointsForLoyaltyVouchersTest is Test {
     ///////////////////////////////////////////////
 
     LoyaltyGift loyaltyGift;
+    LoyaltyProgram loyaltyProgram;
+    HelperConfig helperConfig; 
 
     function setUp() external {
         DeployPointsForLoyaltyVouchers deployer = new DeployPointsForLoyaltyVouchers();
         loyaltyGift = deployer.run();
+
+        DeployLoyaltyProgram deployerProgram = new DeployLoyaltyProgram();
+        (loyaltyProgram, helperConfig)  = deployerProgram.run();
     }
 
     function testLoyaltyGiftHasGifts() public {
@@ -66,24 +72,28 @@ contract PointsForLoyaltyVouchersTest is Test {
     ///        Minting token / vouchers         ///
     ///////////////////////////////////////////////
     function testLoyaltyVouchersCanBeMinted() public {
-        vm.prank(addressZero);
-        loyaltyGift.mintLoyaltyVouchers(VOUCHERS_TO_MINT, AMOUNT_VOUCHERS_TO_MINT);
+        address ownerProgram = loyaltyProgram.getOwner(); 
 
-        assertEq(loyaltyGift.balanceOf(addressZero, VOUCHERS_TO_MINT[0]), AMOUNT_VOUCHERS_TO_MINT[0]);
+        vm.prank(ownerProgram);
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), VOUCHERS_TO_MINT, AMOUNT_VOUCHERS_TO_MINT);
+
+        assertEq(loyaltyGift.balanceOf(ownerProgram, VOUCHERS_TO_MINT[0]), AMOUNT_VOUCHERS_TO_MINT[0]);
     }
 
     function testMintingVouchersEmitsEvent() public {
+        address ownerProgram = loyaltyProgram.getOwner(); 
+
         vm.expectEmit(true, false, false, false, address(loyaltyGift));
         emit TransferSingle(
-            addressZero, // address indexed operator,
+            address(loyaltyProgram), // address indexed operator,
             address(0), // address indexed from,
-            addressZero, // address indexed to,
+            ownerProgram, // address indexed to,
             VOUCHERS_TO_MINT[0],
             AMOUNT_VOUCHERS_TO_MINT[0]
         );
 
-        vm.prank(addressZero);
-        loyaltyGift.mintLoyaltyVouchers(VOUCHERS_TO_MINT, AMOUNT_VOUCHERS_TO_MINT);
+        vm.prank(ownerProgram);
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), VOUCHERS_TO_MINT, AMOUNT_VOUCHERS_TO_MINT);
     }
 
     ///////////////////////////////////////////////

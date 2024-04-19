@@ -75,8 +75,9 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     error LoyaltyProgram__RequestInvalid();
     error LoyaltyProgram__LoyaltyGiftInvalid();
     error LoyaltyProgram__LoyaltyVoucherInvalid();
+    error LoyaltyProgram__VoucherTransferInvalid(); 
     error LoyaltyProgram__RequirementsGiftNotMet(); 
-    error LoyaltyProgram__IncorrectInterface(address loyaltyGift, bytes4 interfaceId);
+    error LoyaltyProgram__IncorrectInterface(address loyaltyGift);
 
     /* Type declarations */
     using ECDSA for bytes32;
@@ -86,6 +87,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     /* State variables */
     uint256 public constant LOYALTY_POINTS_ID = 0;
     bytes32 private constant SALT_TOKEN_BASED_ACCOUNT = 0x05416460deb86d57af601be17e777b93592d9d4d4a4096c57876a91c84f4a712;
+    address private constant ERC6551_REGISTRY = 0x000000006551c19487814612e58FE06813775758; 
 
     // EIP712 domain separator
     struct EIP712Domain {
@@ -115,14 +117,13 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     address private immutable s_owner;
     bytes32 private immutable DOMAIN_SEPARATOR;
 
-    mapping(bytes32 => uint256 executed) private requestExecuted; // 0 = false & 1 = true.
+    mapping(bytes => uint256 executed) private requestExecuted; // 0 = false & 1 = true.
     mapping(address loyaltyCard => uint256 nonce) private s_nonceLoyaltyCard;
     mapping(address loyaltyCardAddress => uint256 exists) private s_LoyaltyCards; // 0 = false & 1 = true.
     mapping(address loyaltyGiftAddress => mapping(uint256 loyaltyGiftId => uint256 exists)) private s_LoyaltyGiftsClaimable; // 0 = false & 1 = true.
-    mapping(address loyaltyGiftAddress => mapping(uint256 loyaltyGiftId => uint256 exists)) private s_LoyaltyVouchersRedeemable; // 0 = false & 1 = true.
+    mapping(address loyaltyGiftAddress => mapping(uint256 loyaltyGiftId => uint256 exists)) private s_LoyaltyVouchersRedeemable; // NB! 0 = true & 1 = false. OPPOSITE OF s_LoyaltyGiftsClaimable!
     uint256 private s_loyaltyCardCounter;
-    ERC6551Registry public s_erc6551Registry;
-    MockLoyaltyCard6551Account public s_erc6551Implementation;
+    address public s_erc6551Implementation;
 
     /* Events */
     event DeployedLoyaltyProgram(address indexed owner, string name, string version);
@@ -144,7 +145,6 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
      * @param _uri the uri linked to the loyalty program. See for example layout of this Uri the LoyaltyPrograms folder.
      * @param _name the name of the Loyalty Program
      * @param _version the version of the Loyalty Program 
-     * @param erc6551Registry address of registry. This address is often the same but can change with test chains, versions, specific deployments of registries, etc. 
      * @param erc6551Implementation this is a bespoke - loyalty program specific - deployment of a standard ERC6551 account example from token bound.  
      *
      * @dev s_owner is now set as msg-sender and cannot be changed later on. This is on the list to change. 
@@ -153,11 +153,10 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
      *
      * emits a DeployedLoyaltyProgram event.
      */
-    constructor(string memory _uri, string memory _name, string memory _version, address erc6551Registry, address payable erc6551Implementation) ERC1155(_uri) {
+    constructor(string memory _uri, string memory _name, string memory _version, address payable erc6551Implementation) ERC1155(_uri) {
         s_owner = msg.sender;
         s_loyaltyCardCounter = 0;
-        s_erc6551Registry = ERC6551Registry(erc6551Registry);
-        s_erc6551Implementation = MockLoyaltyCard6551Account(erc6551Implementation);
+        s_erc6551Implementation = erc6551Implementation; 
 
         DOMAIN_SEPARATOR = hashDomain(
             EIP712Domain({
@@ -181,7 +180,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
      * @dev no limit to the amount of cards to mint - when to many are minted, gas limits kick in. 
      * @dev each address of Token Bound Account (TBA) is stored in s_LoyaltyCards.
      * @dev £security it should be (and I think is now) impossible to mint more than one loyaltyCard of the same Id. 
-     * This is crucial as the MockLoyaltyCard6551Account contract does not have a check for this - due to this contract being ERC-1155 based (instead of ERC-721). 
+     * This is crucial as the LoyaltyCard6551Account contract does not have a check for this - due to this contract being ERC-1155 based (instead of ERC-721). 
      * if more than one card of the same id are minted, you _will_ have a loyalty Card with multiple owners. 
      *
      * - emits a transferBatch event.
@@ -239,12 +238,10 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
 
     function addLoyaltyGift(address loyaltyGiftAddress, uint256 loyaltyGiftId) public onlyOwner {
         // £security £todo: I cannot get supportsInterface interface to work for now. Try again later. 
-        // bytes4 interfaceId = type(ILoyaltyGift).interfaceId;
-        // if (!loyaltyGiftAddress.supportsInterface(0x140b2c57) ) {
-        //     revert LoyaltyProgram__IncorrectInterface(loyaltyGiftAddress, interfaceId);
-        // }
+        if (ERC165Checker.supportsInterface(loyaltyGiftAddress, type(ILoyaltyGift).interfaceId) == false) {
+            revert LoyaltyProgram__IncorrectInterface(loyaltyGiftAddress);
+        }
         s_LoyaltyGiftsClaimable[loyaltyGiftAddress][loyaltyGiftId] = 1;
-        s_LoyaltyVouchersRedeemable[loyaltyGiftAddress][loyaltyGiftId] = 1;
         emit AddedLoyaltyGift(loyaltyGiftAddress, loyaltyGiftId);
     }
 
@@ -278,15 +275,18 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
      * @dev Calling this function is an extreme measure and should only be used on extreme cases (malfunction, hack, etc).
      * @dev it also removes gifts from claimable whitelist, avoiding scenario where voucher can be claimed but not redeemed.
      * @dev only owner can remove contracts from whitelist.
+     * @dev NOTICE opposite boolean logic of s_LoyaltyGiftsClaimable and s_LoyaltyVouchersRedeemable. 
+     * With s_LoyaltyGiftsClaimable     0 = false 
+     * With s_LoyaltyVouchersRedeemable 1 = false
      *
      * - emits an RemovedLoyaltyGiftRedeemable event.
      */
     function removeLoyaltyGiftRedeemable(address loyaltyGiftAddress, uint256 loyaltyGiftId) public onlyOwner {
-        if (s_LoyaltyVouchersRedeemable[loyaltyGiftAddress][loyaltyGiftId] == 0) {
+        if (s_LoyaltyVouchersRedeemable[loyaltyGiftAddress][loyaltyGiftId] == 1) {
             revert LoyaltyProgram__LoyaltyGiftInvalid();
         }
         s_LoyaltyGiftsClaimable[loyaltyGiftAddress][loyaltyGiftId] = 0;
-        s_LoyaltyVouchersRedeemable[loyaltyGiftAddress][loyaltyGiftId] = 0;
+        s_LoyaltyVouchersRedeemable[loyaltyGiftAddress][loyaltyGiftId] = 1;
 
         emit RemovedLoyaltyGiftRedeemable(loyaltyGiftAddress, loyaltyGiftId);
     }
@@ -307,7 +307,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         uint256[] memory loyaltyGiftIds,
         uint256[] memory numberOfVouchers
     ) public onlyOwner {
-        LoyaltyGift(loyaltyGiftAddress).mintLoyaltyVouchers(loyaltyGiftIds, numberOfVouchers);
+        ILoyaltyGift(loyaltyGiftAddress).mintLoyaltyVouchers(loyaltyGiftIds, numberOfVouchers);
     }
 
     /**
@@ -315,7 +315,8 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
      * @param to todo 
      * @param loyaltyGiftId todo 
      *
-     * @dev anyone can call this function; but will bounce (due to safeTransferFrom being called) when not owner of voucher.
+     * @dev safeTransferFrom at ILoyaltyGift bypasses the usual approval check because transfers need to be called via the LoyaltyProgram contract.  
+     * Instead, checks of ownership are placed at the LoyaltyProgram contract, before calling safeTransferFrom at ILoyaltyGift / Loyalty Gift contract.  
      *
      * - emits transferSingle event.
      */
@@ -325,7 +326,15 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         uint256 loyaltyGiftId, 
         address loyaltyGiftAddress
     ) public {
-        LoyaltyGift(loyaltyGiftAddress).safeTransferFrom(from, to, loyaltyGiftId, 1, "");
+        if (
+            from != s_owner && 
+            to != s_owner &&
+            ILoyaltyGift(loyaltyGiftAddress).balanceOf(from, loyaltyGiftId) == 0 
+        ) {
+            revert LoyaltyProgram__VoucherTransferInvalid();
+        }
+
+        ILoyaltyGift(loyaltyGiftAddress).safeTransferFrom(from, to, loyaltyGiftId, 1, "");
     }
 
     /**
@@ -374,6 +383,11 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         address signer = digest.recover(signature);
 
         // Checks. 
+        // Check that this signature hasn't already been executed
+        if (requestExecuted[signature] == 1) {
+            revert LoyaltyProgram__RequestAlreadyExecuted();
+        }
+
         // Checks if signer equals customer address
         if (signer != customerAddress) {
             revert LoyaltyProgram__RequestInvalid();
@@ -384,24 +398,17 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
             revert LoyaltyProgram__NotOwnerLoyaltyCard();
         }
 
-        // Check that this signature hasn't already been executed
-        if (requestExecuted[digest] == 1) {
-            revert LoyaltyProgram__RequestAlreadyExecuted();
-        }
-
         // check if Loyalty gift is valid.
         if (s_LoyaltyGiftsClaimable[loyaltyGiftAddress][loyaltyGiftId] == 0) {
             revert LoyaltyProgram__LoyaltyGiftInvalid();
         }
 
-        // check if requirements are met.
-        if (ILoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(loyaltyCardAddress, loyaltyGiftId, loyaltyPoints)) {
-            revert LoyaltyProgram__RequirementsGiftNotMet();
-        }
+        // check if requirements are met. Reverts with reason WHY not met. 
+        ILoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(loyaltyCardAddress, loyaltyGiftId, loyaltyPoints); 
 
         // Effect.
         // 1) set executed to true..
-        requestExecuted[digest] = 1;
+        requestExecuted[signature] = 1;
         // 2) add 1 to nonce
         s_nonceLoyaltyCard[loyaltyCardAddress] = ++s_nonceLoyaltyCard[loyaltyCardAddress];
 
@@ -409,8 +416,8 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         // 3) retrieve loyalty points from customer
         _safeTransferFrom(loyaltyCardAddress, s_owner, 0, loyaltyPoints, "");
         // and 4), if gift is tokenised, transfer voucher.
-        if (LoyaltyGift(loyaltyGiftAddress).getIsVoucher(loyaltyGiftId) == 1) {
-            // refactor into LoyaltyGift(loyaltyGift)._safeTransferFrom ? 
+        if (ILoyaltyGift(loyaltyGiftAddress).getIsVoucher(loyaltyGiftId) == 1) {
+            // refactor into MockLoyaltyGift(loyaltyGift)._safeTransferFrom ? 
             transferLoyaltyVoucher(s_owner, loyaltyCardAddress, loyaltyGiftId, loyaltyGiftAddress); 
         }
     }
@@ -457,6 +464,11 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         address signer = digest.recover(signature);
 
         // Checks. 
+            // Check that this digest hasn't already been executed
+        if (requestExecuted[signature] == 1) {
+            revert LoyaltyProgram__RequestAlreadyExecuted();
+        }
+
         // check if signer is customer address 
         if (signer != customerAddress) {
             revert LoyaltyProgram__RequestInvalid();
@@ -467,19 +479,14 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
             revert LoyaltyProgram__NotOwnerLoyaltyCard();
         }
 
-        // Check that this digest hasn't already been executed
-        if (requestExecuted[digest] == 1) {
-            revert LoyaltyProgram__RequestAlreadyExecuted();
-        }
-
         // check if loyalty Voucher is valid.
-        if (s_LoyaltyVouchersRedeemable[loyaltyGiftAddress][loyaltyGiftId] == 0) {
+        if (s_LoyaltyVouchersRedeemable[loyaltyGiftAddress][loyaltyGiftId] == 1) {
             revert LoyaltyProgram__LoyaltyVoucherInvalid();
         }
 
         // Execute.
         // 1) set executed to true..
-        requestExecuted[digest] = 1;
+        requestExecuted[signature] = 1;
         s_nonceLoyaltyCard[loyaltyCardAddress] = ++s_nonceLoyaltyCard[loyaltyCardAddress];
 
         // Interact.
@@ -529,6 +536,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
                     revert LoyaltyProgram__TransferDenied();
                 }
             }
+            // loyalty cards cannot be transferred to other loyalty cards. 
             if (ids[i] != LOYALTY_POINTS_ID) {
                 if (s_LoyaltyCards[to] == 1) {
                     revert LoyaltyProgram__TransferDenied();
@@ -539,8 +547,8 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     }
 
     function _createTokenBoundAccount(uint256 _loyaltyCardId) internal returns (address tokenBoundAccount) {
-        tokenBoundAccount = s_erc6551Registry.createAccount(
-            address(s_erc6551Implementation), SALT_TOKEN_BASED_ACCOUNT, block.chainid, address(this), _loyaltyCardId
+        tokenBoundAccount = ERC6551Registry(ERC6551_REGISTRY).createAccount(
+            s_erc6551Implementation, SALT_TOKEN_BASED_ACCOUNT, block.chainid, address(this), _loyaltyCardId
         );
 
         return tokenBoundAccount;
@@ -600,8 +608,8 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     }
 
     function getTokenBoundAddress(uint256 _loyaltyCardId) public view returns (address tokenBoundAccount) {
-        tokenBoundAccount = s_erc6551Registry.account(
-            address(s_erc6551Implementation), SALT_TOKEN_BASED_ACCOUNT, block.chainid, address(this), _loyaltyCardId 
+        tokenBoundAccount = ERC6551Registry(ERC6551_REGISTRY).account(
+            s_erc6551Implementation, SALT_TOKEN_BASED_ACCOUNT, block.chainid, address(this), _loyaltyCardId 
         );
         return tokenBoundAccount;
     }
@@ -635,30 +643,3 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         return s_nonceLoyaltyCard[loyaltyCardAddress];
     }
 }
-
-// Notes to self (£todo): 
-// When reviewing this code, check: https://github.com/transmissions11/solcurity
-// see also: https://github.com/nascentxyz/simple-security-toolkit
-// see: https://solidity-by-example.org/structs/ re how to create structs
-
-
-// Structure contract // -- from Patrick Collins. 
-/* version */
-/* imports */
-/* errors */
-/* interfaces, libraries, contracts */
-/* Type declarations */
-/* State variables */
-/* Events */
-/* Modifiers */
-
-/* FUNCTIONS: */
-/* constructor */
-/* receive function (if exists) */
-/* fallback function (if exists) */
-/* external */
-/* public */
-/* internal */
-/* private */
-/* internal & private view & pure functions */
-/* external & public view & pure functions */

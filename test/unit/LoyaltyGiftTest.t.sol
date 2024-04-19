@@ -37,7 +37,7 @@ contract LoyaltyGiftsTest is Test {
         string memory name = "Loyalty Program"; 
         string memory version = "1";
 
-        (, string memory uri,,, address erc65511Registry, address erc65511Implementation,) =
+        (, string memory uri,,,, address erc65511Implementation,) =
             helperConfig.activeNetworkConfig();
 
         vm.startBroadcast();
@@ -53,7 +53,6 @@ contract LoyaltyGiftsTest is Test {
             uri, 
             name,
             version,
-            erc65511Registry,
             payable(erc65511Implementation)
         ); 
         vm.stopBroadcast();
@@ -74,18 +73,19 @@ contract LoyaltyGiftsTest is Test {
     }
     
     ///////////////////////////////////////////////
-    ///          Mintin Vouchers                ///
+    ///          Minting Vouchers                ///
     ///////////////////////////////////////////////
     function testVouchersCanBeMinted() public {
         uint256[] memory voucherId = new uint256[](1); // only emmpty fixed arrays can be initiated in memory 
         voucherId[0] = 1; 
         uint256[] memory numberOfVouchers = new uint256[](1); 
         numberOfVouchers[0] = 25;
+        address owner = loyaltyProgram.getOwner(); 
 
-        vm.prank(addressZero);
-        loyaltyGift.mintLoyaltyVouchers(voucherId, numberOfVouchers);
+        vm.prank(owner);
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherId, numberOfVouchers);
 
-        assertEq(loyaltyGift.balanceOf(addressZero, voucherId[0]), numberOfVouchers[0]);
+        assertEq(loyaltyGift.balanceOf(owner, voucherId[0]), numberOfVouchers[0]);
     }
 
     function testNonVouchersCannotBeMinted() public {
@@ -93,6 +93,7 @@ contract LoyaltyGiftsTest is Test {
         voucherId[0] = 0; 
         uint256[] memory numberOfVouchers = new uint256[](1); 
         numberOfVouchers[0] = 25;
+        address owner = loyaltyProgram.getOwner(); 
 
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -100,8 +101,8 @@ contract LoyaltyGiftsTest is Test {
             )
         );
 
-        vm.prank(addressZero);
-        loyaltyGift.mintLoyaltyVouchers(voucherId, numberOfVouchers);
+        vm.prank(owner);
+        loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), voucherId, numberOfVouchers);
     }
 }
 

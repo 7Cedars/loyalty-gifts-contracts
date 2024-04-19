@@ -117,8 +117,8 @@ contract TieredAccessTest is Test {
         address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1);
         address ownerProgram = loyaltyProgram.getOwner();
 
-        vm.startPrank(address(loyaltyProgram)); 
-        loyaltyGift.safeTransferFrom(ownerProgram, loyaltyCardAddress, 0, 1, ""); 
+        vm.prank(ownerProgram); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 0, address(loyaltyGift)); 
         loyaltyGift.requirementsLoyaltyGiftMet(loyaltyCardAddress, 3, 1500); 
         vm.stopPrank(); 
     }
@@ -136,7 +136,7 @@ contract TieredAccessTest is Test {
         address ownerProgram = loyaltyProgram.getOwner();
 
         vm.prank(ownerProgram); 
-        loyaltyGift.safeTransferFrom(ownerProgram, loyaltyCardAddress, 0, 1, ""); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 0, address(loyaltyGift)); 
 
         vm.expectRevert("No Silver or Gold token on Card"); 
         vm.prank(ownerProgram); 
@@ -148,7 +148,7 @@ contract TieredAccessTest is Test {
         address ownerProgram = loyaltyProgram.getOwner();
 
         vm.prank(ownerProgram); 
-        loyaltyGift.safeTransferFrom(ownerProgram, loyaltyCardAddress, 1, 1, ""); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 1, address(loyaltyGift)); 
 
         vm.prank(ownerProgram); 
         (bool result) = loyaltyGift.requirementsLoyaltyGiftMet(loyaltyCardAddress, 4, 3000); 
@@ -169,7 +169,7 @@ contract TieredAccessTest is Test {
         address ownerProgram = loyaltyProgram.getOwner();
 
         vm.prank(ownerProgram); 
-        loyaltyGift.safeTransferFrom(ownerProgram, loyaltyCardAddress, 1, 1, ""); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 1, address(loyaltyGift)); 
 
         vm.expectRevert("No Gold token on Card"); 
         vm.prank(ownerProgram); 
@@ -181,7 +181,7 @@ contract TieredAccessTest is Test {
         address ownerProgram = loyaltyProgram.getOwner();
 
         vm.prank(ownerProgram); 
-        loyaltyGift.safeTransferFrom(ownerProgram, loyaltyCardAddress, 2, 1, ""); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 2, address(loyaltyGift)); 
 
         vm.prank(ownerProgram); 
         (bool result) = loyaltyGift.requirementsLoyaltyGiftMet(loyaltyCardAddress, 5, 5000); 

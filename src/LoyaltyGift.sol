@@ -22,7 +22,7 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
     /* errors */
     error LoyaltyGift__NoVouchersAvailable(address loyaltyToken);
     error LoyaltyGift__IsNotVoucher(address loyaltyToken, uint256 loyaltyGiftId);
-    error LoyaltyGift__TransferDenied(address loyaltyToken);
+    error LoyaltyGift__TransferToNonAffiliate(address loyaltyToken);
 
     /* State variables */
     uint256[] s_isClaimable; 
@@ -122,23 +122,29 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
         
         // check if transfer is going or coming from Loyalty Card registered with Loyalty Program.   
         if (address(0) != from) {
-            // @dev these two if statements combine to check: 
-            // to or from == program owner? if not, addresses HAVE to be from loyalty card. 
-            // it excludes any addresses not affiliated with loyalty program. 
-            // hence we can bypass additional check of safeTransferFrom. 
 
+            // @dev these two if statements combine to check:
+            // msg.sender == loyalty program? If not, it crashes. (rather rudely I might add, still need to make this smoother £todo)   
+            // to or from == program owner? if not, addresses HAVE to be from loyalty card. 
+            // it excludes any addresses not affiliated with loyalty program and hence can bypass additional check of safeTransferFrom. 
             if (LoyaltyProgram(msg.sender).getOwner() != to) {
                 try LoyaltyProgram(msg.sender).getBalanceLoyaltyCard(to) {}
-                catch { revert LoyaltyGift__TransferDenied(address(this)); }
+                catch { revert LoyaltyGift__TransferToNonAffiliate(address(this)); }
             }
             if (LoyaltyProgram(msg.sender).getOwner() != from) {
                 try LoyaltyProgram(msg.sender).getBalanceLoyaltyCard(from) {}
-                catch { revert LoyaltyGift__TransferDenied(address(this)); }
+                catch { revert LoyaltyGift__TransferToNonAffiliate(address(this)); }
             }
         } 
         super._safeTransferFrom(from, to, id, amount, data);
     }
 
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ILoyaltyGift, ERC1155) returns (bool) {
+    
+      return 
+        interfaceId == type(ILoyaltyGift).interfaceId || 
+        super.supportsInterface(interfaceId);
+    }
 
     /* getter functions */
     function getNumberOfGifts() external view returns (uint256) {
