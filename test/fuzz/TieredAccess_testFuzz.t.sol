@@ -102,8 +102,8 @@ contract TieredAccess_testFuzz is Test {
           loyaltyProgram.transferLoyaltyVoucher(
             ownerProgram, 
             loyaltyCardAddress, 
-            tokenId, 
-            address(loyaltyGift)
+            address(loyaltyGift),
+            tokenId
           ); 
         }
         
@@ -151,8 +151,8 @@ contract TieredAccess_testFuzz is Test {
           loyaltyProgram.transferLoyaltyVoucher(
             ownerProgram, 
             loyaltyCardAddress, 
-            tokenId, 
-            address(loyaltyGift)
+            address(loyaltyGift), 
+            tokenId
           ); 
         }
         
@@ -200,8 +200,8 @@ contract TieredAccess_testFuzz is Test {
           loyaltyProgram.transferLoyaltyVoucher(
             ownerProgram, 
             loyaltyCardAddress, 
-            tokenId, 
-            address(loyaltyGift)
+            address(loyaltyGift), 
+            tokenId
           ); 
         }
         

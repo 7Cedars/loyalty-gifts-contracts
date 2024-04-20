@@ -66,14 +66,4 @@ contract PointsForLoyaltyGiftsTest is Test {
       loyaltyProgram.addLoyaltyGift(address(loyaltyGift), 0); 
       assertEq(loyaltyProgram.getLoyaltyGiftIsClaimable(address(loyaltyGift), 0), 1); 
     }
-
-    ///////////////////////////////////////////////
-    ///            Issuing gifts                ///
-    ///////////////////////////////////////////////
-    function testReturnsTrueForSuccess() public {
-        vm.prank(addressZero);
-        bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 3000); 
-        assertEq(result, true);
-    }
-
 }

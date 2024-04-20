@@ -115,8 +115,8 @@ contract PointsForPseudoRaffle_testFuzz is Test {
           loyaltyProgram.transferLoyaltyVoucher(
                 ownerProgram, 
                 loyaltyCardAddress, 
-                0, 
-                address(loyaltyGift)
+                address(loyaltyGift), 
+                0
             ); 
 
           console.log("Gift1:", loyaltyGift.balanceOf(loyaltyCardAddress, 1)); 

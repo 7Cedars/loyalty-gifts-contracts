@@ -195,8 +195,8 @@ contract PointsForPseudoRaffleTest is Test {
             loyaltyProgram.transferLoyaltyVoucher(
                 ownerProgram, 
                 loyaltyCardAddress, 
-                0, 
-                address(loyaltyGift)
+                address(loyaltyGift), 
+                0
             ); 
         vm.stopPrank();
 
@@ -240,8 +240,8 @@ contract PointsForPseudoRaffleTest is Test {
             loyaltyProgram.transferLoyaltyVoucher(
                 ownerProgram, 
                 loyaltyCardAddress, 
-                0, 
-                address(loyaltyGift)
+                address(loyaltyGift), 
+                0
             ); 
         vm.stopPrank();
         

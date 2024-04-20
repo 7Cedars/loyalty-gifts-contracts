@@ -21,6 +21,14 @@ import {ILoyaltyProgram} from "./interfaces/ILoyaltyProgram.sol";
  * contracts to interact with one type of contract, instead of two.
  */
 contract LoyaltyGift is ERC1155, ILoyaltyGift {
+    /* errors */
+    error LoyaltyGift__LoyaltyProgramNotRecognised(address loyaltyToken);
+    error LoyaltyGift__RequirementsNotMet(address loyaltyToken, uint256 loyaltyGiftId);
+    error LoyaltyGift__NoVouchersAvailable(address loyaltyGift);
+    error LoyaltyGift__IsNotVoucher(address loyaltyGift, uint256 loyaltyGiftId);
+    error LoyaltyGift__TransferToNonAffiliate(address loyaltyGift);
+    error LoyaltyGift__IncorrectInterface(address loyaltyGift); 
+
     /* State variables */
     uint256[] s_isClaimable; 
     uint256[] s_isVoucher; 
@@ -79,7 +87,7 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
         uint256 loyaltyGiftId, 
         uint256 /*loyaltyPoints*/ 
         ) public virtual onlyLoyaltyProgram returns (bool success) {
-            if (s_isClaimable[loyaltyGiftId] == 0) revert ("Token is not claimable."); 
+            if (s_isClaimable[loyaltyGiftId] == 0) revert ("Gift is not claimable."); 
             return true;
     }
 

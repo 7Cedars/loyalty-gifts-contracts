@@ -67,6 +67,24 @@ import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
  */
 
 contract LoyaltyProgram is ERC1155, IERC1155Receiver, ILoyaltyProgram { // removed: ReentrancyGuard
+    /* errors */
+    error LoyaltyProgram__OnlyOwner();
+    error LoyaltyProgram__TransferDenied();
+    error LoyaltyProgram__RequestAlreadyExecuted();
+    error LoyaltyProgram__NotOwnerLoyaltyCard();
+    error LoyaltyProgram__RequestInvalid();
+    error LoyaltyProgram__LoyaltyGiftInvalid();
+    error LoyaltyProgram__LoyaltyVoucherInvalid();
+    error LoyaltyProgram__VoucherTransferInvalid(); 
+    error LoyaltyProgram__RequirementsGiftNotMet(); 
+    error LoyaltyProgram__IncorrectInterface(address loyaltyGift);
+    
+    /* Events */
+    event DeployedLoyaltyProgram(address indexed owner, string name, string version);
+    event AddedLoyaltyGift(address indexed loyaltyGift, uint256 loyaltyGiftId);
+    event RemovedLoyaltyGiftClaimable(address indexed loyaltyGift, uint256 loyaltyGiftId);
+    event RemovedLoyaltyGiftRedeemable(address indexed loyaltyGift, uint256 loyaltyGiftId);
+
     /* Type declarations */
     using ECDSA for bytes32;
     using MessageHashUtils for bytes32;
@@ -280,14 +298,15 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver, ILoyaltyProgram { // remov
      * 
      */
     function checkRequirementsLoyaltyGiftMet(
+        address loyaltyCard, 
         address loyaltyGiftAddress,
         uint256 loyaltyGiftId 
     ) public returns (bool) {
-        uint256 balanceSender = balanceOf(msg.sender, 0);  
+        uint256 balanceSender = balanceOf(loyaltyCard, 0);  
         if (balanceSender == 0) {
             revert ("Sender does not own loyalty points"); 
         }
-        return ILoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(msg.sender, loyaltyGiftId, balanceSender); 
+        return ILoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, balanceSender); 
     }
 
     /**
@@ -323,8 +342,8 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver, ILoyaltyProgram { // remov
     function transferLoyaltyVoucher(
         address from,
         address to,
-        uint256 loyaltyGiftId, 
-        address loyaltyGiftAddress
+        address loyaltyGiftAddress, 
+        uint256 loyaltyGiftId
     ) public {
         if (
             from != s_owner && 
@@ -418,7 +437,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver, ILoyaltyProgram { // remov
         // and 4), if gift is tokenised, transfer voucher.
         if (ILoyaltyGift(loyaltyGiftAddress).getIsVoucher(loyaltyGiftId) == 1) {
             // refactor into MockLoyaltyGift(loyaltyGift)._safeTransferFrom ? 
-            transferLoyaltyVoucher(s_owner, loyaltyCardAddress, loyaltyGiftId, loyaltyGiftAddress); 
+            transferLoyaltyVoucher(s_owner, loyaltyCardAddress, loyaltyGiftAddress, loyaltyGiftId); 
         }
     }
 
@@ -491,7 +510,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver, ILoyaltyProgram { // remov
 
         // Interact.
         // 2) retrieve loyalty voucher
-        transferLoyaltyVoucher(loyaltyCardAddress, s_owner, loyaltyGiftId, loyaltyGiftAddress); 
+        transferLoyaltyVoucher(loyaltyCardAddress, s_owner, loyaltyGiftAddress, loyaltyGiftId); 
     }
 
     /* Implementation ERC standards */ 

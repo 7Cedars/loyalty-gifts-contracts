@@ -42,7 +42,7 @@ contract TieredAccessTest is Test {
         // step 1a: owner mints cards, points. (points are owned by EOA)
         vm.startPrank(ownerProgram);
         loyaltyProgram.mintLoyaltyCards(5); 
-        loyaltyProgram.mintLoyaltyPoints(50_000); 
+        loyaltyProgram.mintLoyaltyPoints(500_000); 
         vm.stopPrank();
 
         // step 1b: program mints vouchers. (vouchers are owned by loyalty Program contract)
@@ -110,24 +110,25 @@ contract TieredAccessTest is Test {
     function testGift3revertsWithInsufficientPoints() public { 
         vm.expectRevert("Not enough points"); 
 
-        vm.prank(addressZero); 
+        vm.prank(address(loyaltyProgram)); 
         loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 3, 1499); 
     }
 
     function testGift3revertsWithoutTokens() public { 
         vm.expectRevert("No Bronze, Silver or Gold token on Card"); 
 
-        vm.prank(addressZero); 
+        vm.prank(address(loyaltyProgram)); 
         loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 3, 1500); 
     }
 
     function testGift3passesWithBronzeTokenOnLoyaltyCard() public programHasBronzeSilverGoldTokens {  
         address loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1);
         address ownerProgram = loyaltyProgram.getOwner();
+        console.log("balance owner:", loyaltyProgram.balanceOf(ownerProgram, 0)); 
 
         vm.prank(ownerProgram); 
-        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 0, address(loyaltyGift)); 
-        loyaltyGift.requirementsLoyaltyGiftMet(loyaltyCardAddress, 3, 1500); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, address(loyaltyGift), 0); 
+        loyaltyProgram.checkRequirementsLoyaltyGiftMet(loyaltyCardAddress, address(loyaltyGift), 3); 
         vm.stopPrank(); 
     }
     
@@ -135,7 +136,7 @@ contract TieredAccessTest is Test {
      function testGift4revertsWithInsufficientPoints() public { 
         vm.expectRevert("Not enough points"); 
 
-        vm.prank(addressZero); 
+        vm.prank(address(loyaltyProgram));
         loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 4, 2999); 
     }
 
@@ -144,11 +145,11 @@ contract TieredAccessTest is Test {
         address ownerProgram = loyaltyProgram.getOwner();
 
         vm.prank(ownerProgram); 
-        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 0, address(loyaltyGift)); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, address(loyaltyGift), 0); 
 
         vm.expectRevert("No Silver or Gold token on Card"); 
         vm.prank(ownerProgram); 
-        loyaltyGift.requirementsLoyaltyGiftMet(loyaltyCardAddress, 4, 3000); 
+        loyaltyProgram.checkRequirementsLoyaltyGiftMet(loyaltyCardAddress, address(loyaltyGift), 4); 
     }
 
     function testGift4passesWithSilverTokenOnLoyaltyCard() public programHasBronzeSilverGoldTokens {  
@@ -156,10 +157,10 @@ contract TieredAccessTest is Test {
         address ownerProgram = loyaltyProgram.getOwner();
 
         vm.prank(ownerProgram); 
-        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 1, address(loyaltyGift)); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, address(loyaltyGift), 1); 
 
         vm.prank(ownerProgram); 
-        (bool result) = loyaltyGift.requirementsLoyaltyGiftMet(loyaltyCardAddress, 4, 3000); 
+        (bool result) = loyaltyProgram.checkRequirementsLoyaltyGiftMet(loyaltyCardAddress, address(loyaltyGift), 4); 
 
         assertEq(result, true); 
     }
@@ -168,7 +169,7 @@ contract TieredAccessTest is Test {
     function testGift5revertsWithInsufficientPoints() public { 
         vm.expectRevert("Not enough points"); 
 
-        vm.prank(addressZero); 
+        vm.prank(address(loyaltyProgram));
         loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 5, 4999); 
     }
 
@@ -177,7 +178,7 @@ contract TieredAccessTest is Test {
         address ownerProgram = loyaltyProgram.getOwner();
 
         vm.prank(ownerProgram); 
-        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 1, address(loyaltyGift)); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, address(loyaltyGift), 1); 
 
         vm.expectRevert("No Gold token on Card"); 
         vm.prank(ownerProgram); 
@@ -189,10 +190,10 @@ contract TieredAccessTest is Test {
         address ownerProgram = loyaltyProgram.getOwner();
 
         vm.prank(ownerProgram); 
-        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, 2, address(loyaltyGift)); 
+        loyaltyProgram.transferLoyaltyVoucher(ownerProgram, loyaltyCardAddress, address(loyaltyGift), 2); 
 
         vm.prank(ownerProgram); 
-        (bool result) = loyaltyGift.requirementsLoyaltyGiftMet(loyaltyCardAddress, 5, 5000); 
+        (bool result) = loyaltyProgram.checkRequirementsLoyaltyGiftMet(loyaltyCardAddress, address(loyaltyGift), 5); 
 
         assertEq(result, true); 
     }

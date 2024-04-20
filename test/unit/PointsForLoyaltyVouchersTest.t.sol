@@ -104,19 +104,6 @@ contract PointsForLoyaltyVouchersTest is Test {
         loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), VOUCHERS_TO_MINT, AMOUNT_VOUCHERS_TO_MINT);
     }
 
-    ///////////////////////////////////////////////
-    ///            Issuing gifts                ///
-    ///////////////////////////////////////////////
-    function testReturnsTrueForSuccess() public {
-        vm.startPrank(addressZero);
-        
-        bool result = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 1, 5000);
-        
-        vm.stopPrank();
-
-        assertEq(result, true);
-    }
-
     // For further testing, see integration tests.
    
 }

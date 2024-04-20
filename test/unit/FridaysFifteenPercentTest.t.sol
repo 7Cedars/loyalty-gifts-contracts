@@ -33,10 +33,40 @@ contract FridaysFifteenPercentTest is Test {
 
     LoyaltyGift loyaltyGift;
     LoyaltyProgram loyaltyProgram; 
+    address loyaltyCardAddress; 
 
     ///////////////////////////////////////////////
     ///                   Setup                 ///
     ///////////////////////////////////////////////
+    
+    modifier programHasCardsPoints() { 
+        address ownerProgram = loyaltyProgram.getOwner(); 
+
+        // step 1a: owner mints cards, points. (points are owned by EOA)
+        vm.startPrank(ownerProgram);
+        loyaltyProgram.mintLoyaltyCards(5); 
+        loyaltyProgram.mintLoyaltyPoints(500_000); 
+        vm.stopPrank();
+
+        // step 1b: program mints vouchers. (vouchers are owned by loyalty Program contract)
+        vm.prank(address(loyaltyProgram)); 
+
+        // step 2: get address of TBA of card no 1. 
+        loyaltyCardAddress = loyaltyProgram.getTokenBoundAddress(1); 
+
+        // step 3a: owner transfers points to card 1 & transfers card 1 to addressZero 
+        vm.startPrank(ownerProgram);
+        loyaltyProgram.safeTransferFrom(
+            ownerProgram, loyaltyCardAddress, 0, 10_000, ""
+        ); 
+        loyaltyProgram.safeTransferFrom(
+            ownerProgram, addressZero, 1, 1, ""
+        );
+        vm.stopPrank(); 
+
+        _; 
+    }
+
 
     function setUp() external {
         DeployFridaysFifteenPercent giftDeployer = new DeployFridaysFifteenPercent();
@@ -91,7 +121,8 @@ contract FridaysFifteenPercentTest is Test {
       loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 2500); 
     }
 
-    function testRequirementPassesWithSufficientPointsAndCorrectDayOfWeek() public { 
+    function testRequirementPassesWithSufficientPointsAndCorrectDayOfWeek() public programHasCardsPoints { 
+      
       vm.warp(1712282400); // = Friday 5 April 2024
       (uint256 year, uint256 month, uint256 day) = DateTime.timestampToDate(block.timestamp); 
       console.logUint(year); 
@@ -99,7 +130,7 @@ contract FridaysFifteenPercentTest is Test {
       console.logUint(day); 
 
       vm.prank(addressZero); 
-      (bool result) = loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 2500); 
+      (bool result) = loyaltyProgram.checkRequirementsLoyaltyGiftMet(loyaltyCardAddress, address(loyaltyGift), 0);
       assertEq(result, true); 
     }
     

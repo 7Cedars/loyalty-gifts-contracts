@@ -6,23 +6,6 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /// @dev the ERC-165 identifier for this interface is ... 
 interface ILoyaltyProgram is IERC165, IERC1155 {
-  /* errors */
-  error LoyaltyProgram__OnlyOwner();
-  error LoyaltyProgram__TransferDenied();
-  error LoyaltyProgram__RequestAlreadyExecuted();
-  error LoyaltyProgram__NotOwnerLoyaltyCard();
-  error LoyaltyProgram__RequestInvalid();
-  error LoyaltyProgram__LoyaltyGiftInvalid();
-  error LoyaltyProgram__LoyaltyVoucherInvalid();
-  error LoyaltyProgram__VoucherTransferInvalid(); 
-  error LoyaltyProgram__RequirementsGiftNotMet(); 
-  error LoyaltyProgram__IncorrectInterface(address loyaltyGift);
-  
-  /* Events */
-  event DeployedLoyaltyProgram(address indexed owner, string name, string version);
-  event AddedLoyaltyGift(address indexed loyaltyGift, uint256 loyaltyGiftId);
-  event RemovedLoyaltyGiftClaimable(address indexed loyaltyGift, uint256 loyaltyGiftId);
-  event RemovedLoyaltyGiftRedeemable(address indexed loyaltyGift, uint256 loyaltyGiftId);
 
   function mintLoyaltyCards(uint256 numberOfLoyaltyCards) external; 
 
@@ -34,11 +17,11 @@ interface ILoyaltyProgram is IERC165, IERC1155 {
    
   function removeLoyaltyGiftRedeemable(address loyaltyGiftAddress, uint256 loyaltyGiftId) external;
 
-  function checkRequirementsLoyaltyGiftMet(address loyaltyGiftAddress, uint256 loyaltyGiftId) external returns (bool);
+  function checkRequirementsLoyaltyGiftMet(address loyaltyCard, address loyaltyGiftAddress, uint256 loyaltyGiftId) external returns (bool);
 
   function mintLoyaltyVouchers(address loyaltyGiftAddress, uint256[] memory loyaltyGiftIds, uint256[] memory numberOfVouchers) external; 
 
-  function transferLoyaltyVoucher(address from, address to, uint256 loyaltyGiftId, address loyaltyGiftAddress) external; 
+  function transferLoyaltyVoucher(address from, address to, address loyaltyGiftAddress, uint256 loyaltyGiftId) external; 
 
   function claimLoyaltyGift(
         string memory _gift,
