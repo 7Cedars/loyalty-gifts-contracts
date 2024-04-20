@@ -61,6 +61,15 @@ contract FridaysFifteenPercentTest is Test {
       new FridaysFifteenPercent(); 
     }
 
+    function testGiftCanBeAddedByLoyaltyProgram() public {
+      address ownerProgram = loyaltyProgram.getOwner(); 
+
+      vm.prank(ownerProgram);
+      loyaltyProgram.addLoyaltyGift(address(loyaltyGift), 0); 
+      assertEq(loyaltyProgram.getLoyaltyGiftIsClaimable(address(loyaltyGift), 0), 1); 
+    }
+
+
     ///////////////////////////////////////////////
     ///             Requirement test            ///
     ///////////////////////////////////////////////

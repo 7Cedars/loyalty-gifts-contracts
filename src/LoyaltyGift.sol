@@ -5,8 +5,10 @@ pragma solidity 0.8.24;
 // import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol"; // ERC165 not implemented for now. 
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import {LoyaltyProgram} from "../test/mocks/LoyaltyProgram.t.sol";
 import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
+import {ILoyaltyProgram} from "./interfaces/ILoyaltyProgram.sol";
 
 /**
  * @title Loyalty Gift
@@ -19,22 +21,25 @@ import {ILoyaltyGift} from "./interfaces/ILoyaltyGift.sol";
  * contracts to interact with one type of contract, instead of two.
  */
 contract LoyaltyGift is ERC1155, ILoyaltyGift {
-    /* errors */
-    error LoyaltyGift__NoVouchersAvailable(address loyaltyToken);
-    error LoyaltyGift__IsNotVoucher(address loyaltyToken, uint256 loyaltyGiftId);
-    error LoyaltyGift__TransferToNonAffiliate(address loyaltyToken);
-
     /* State variables */
     uint256[] s_isClaimable; 
     uint256[] s_isVoucher; 
     uint256[] s_cost;
     uint256[] s_hasAdditionalRequirements;   
 
+    /* Modifiers */
+    modifier onlyLoyaltyProgram() {
+        if (ERC165Checker.supportsInterface(msg.sender, type(ILoyaltyProgram).interfaceId) == false) {
+            revert LoyaltyGift__IncorrectInterface(address(this));
+        }
+        _;
+    }
+
     /* FUNCTIONS: */
     /**
      * @notice constructor function. 
      * 
-     * @param loyaltyTokenUri URI of vouchers. Follows ERC 1155 standard.  
+     * @param loyaltyGiftUri URI of vouchers. Follows ERC 1155 standard.  
      * @param isClaimable => can gift directly be claimed by customer?
      * @param isVoucher => is the gift a voucher (to be redeemed later) or has to be immediatly redeemed at the till? 
      * @param cost =>  What is cost (in points) of voucher? 
@@ -43,12 +48,12 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
      * emits a LoyaltyGiftDeployed event.  
      */
     constructor(
-        string memory loyaltyTokenUri, 
+        string memory loyaltyGiftUri, 
         uint256[] memory isClaimable,
         uint256[] memory isVoucher,
         uint256[] memory cost,
         uint256[] memory hasAdditionalRequirements   
-        ) ERC1155(loyaltyTokenUri) {
+        ) ERC1155(loyaltyGiftUri) {
             s_isClaimable = isClaimable; 
             s_isVoucher = isVoucher;
             s_cost = cost;
@@ -69,14 +74,13 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
      * - loyaltyPoints: number of LoyaltyPoints sent. 
      *
      */
-    function requirementsLoyaltyGiftMet(address, /*loyaltyCard*/ uint256 loyaltyGiftId, uint256 /*loyaltyPoints*/ )
-        public
-        virtual
-        returns (bool success)
-    {
-        if (s_isClaimable[loyaltyGiftId] == 0) revert ("Token is not claimable."); 
-
-        return true;
+    function requirementsLoyaltyGiftMet(
+        address /*loyaltyCard*/, 
+        uint256 loyaltyGiftId, 
+        uint256 /*loyaltyPoints*/ 
+        ) public virtual onlyLoyaltyProgram returns (bool success) {
+            if (s_isClaimable[loyaltyGiftId] == 0) revert ("Token is not claimable."); 
+            return true;
     }
 
     /**
@@ -92,14 +96,17 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
      * emits a TransferSINGLE event when one type of voucher minted; TransferBatch when multiple are minted. 
      * £todo: CHECK If this is true!  
      */
-    function mintLoyaltyVouchers(uint256[] memory loyaltyGiftIds, uint256[] memory numberOfVouchers) public {
-        for (uint256 i; i < loyaltyGiftIds.length; ) {
-            if (s_isVoucher[loyaltyGiftIds[i]] == 0) {
-                revert LoyaltyGift__IsNotVoucher(address(this), loyaltyGiftIds[i]);
+    function mintLoyaltyVouchers(
+        uint256[] memory loyaltyGiftIds, 
+        uint256[] memory numberOfVouchers
+        ) public onlyLoyaltyProgram {
+            for (uint256 i; i < loyaltyGiftIds.length; ) {
+                if (s_isVoucher[loyaltyGiftIds[i]] == 0) {
+                    revert LoyaltyGift__IsNotVoucher(address(this), loyaltyGiftIds[i]);
+                }
+            unchecked { ++i; } 
             }
-        unchecked { ++i; } 
-        }
-        _mintBatch(LoyaltyProgram(msg.sender).getOwner(), loyaltyGiftIds, numberOfVouchers, ""); // emits batchtransfer event
+            _mintBatch(LoyaltyProgram(msg.sender).getOwner(), loyaltyGiftIds, numberOfVouchers, ""); // emits batchtransfer event
     }
  
     /**
@@ -139,8 +146,12 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
         super._safeTransferFrom(from, to, id, amount, data);
     }
 
+    /**
+     * @notice implementation ERC-165 interface id. 
+     * 
+     * @param interfaceId: id of interface 
+     */
     function supportsInterface(bytes4 interfaceId) public view virtual override(ILoyaltyGift, ERC1155) returns (bool) {
-    
       return 
         interfaceId == type(ILoyaltyGift).interfaceId || 
         super.supportsInterface(interfaceId);
@@ -167,3 +178,26 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
         return s_hasAdditionalRequirements[index]; 
     }
 }
+
+
+// Structure contract // -- from Patrick Collins. 
+/* version */
+/* imports */
+/* errors */
+/* interfaces, libraries, contracts */
+/* Type declarations */
+/* State variables */
+/* Events */
+/* Modifiers */
+
+/* FUNCTIONS: */
+/* constructor */
+/* receive function (if exists) */
+/* fallback function (if exists) */
+/* external */
+/* public */
+/* internal */
+/* private */
+/* internal & private view & pure functions */
+/* external & public view & pure functions */
+

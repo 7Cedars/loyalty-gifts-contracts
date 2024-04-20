@@ -5,6 +5,7 @@ import {Test, console} from "forge-std/Test.sol";
 import {LoyaltyProgram} from "../mocks/LoyaltyProgram.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 import {DeployPointsForLoyaltyGifts} from "../../script/DeployPointsForLoyaltyGifts.s.sol";
+import {DeployLoyaltyProgram} from "../../script/DeployLoyaltyProgram.s.sol";
 import {PointsForLoyaltyGifts} from "../../src/PointsForLoyaltyGifts.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 
@@ -27,15 +28,20 @@ contract PointsForLoyaltyGiftsTest is Test {
     uint256 keyOne = vm.envUint("DEFAULT_ANVIL_KEY_1");
     address addressOne = vm.addr(keyOne);
 
+    LoyaltyGift loyaltyGift;
+    LoyaltyProgram loyaltyProgram; 
+
     ///////////////////////////////////////////////
     ///                   Setup                 ///
     ///////////////////////////////////////////////
 
-    LoyaltyGift loyaltyGift;
 
     function setUp() external {
         DeployPointsForLoyaltyGifts deployer = new DeployPointsForLoyaltyGifts();
         loyaltyGift = deployer.run();
+
+        DeployLoyaltyProgram programDeployer = new DeployLoyaltyProgram();
+        (loyaltyProgram, ) = programDeployer.run();
     }
 
     function testLoyaltyGiftHasGifts() public {
@@ -51,6 +57,14 @@ contract PointsForLoyaltyGiftsTest is Test {
         
         vm.prank(addressZero);
         new PointsForLoyaltyGifts();
+    }
+
+    function testGiftCanBeAddedByLoyaltyProgram() public {
+      address ownerProgram = loyaltyProgram.getOwner(); 
+
+      vm.prank(ownerProgram);
+      loyaltyProgram.addLoyaltyGift(address(loyaltyGift), 0); 
+      assertEq(loyaltyProgram.getLoyaltyGiftIsClaimable(address(loyaltyGift), 0), 1); 
     }
 
     ///////////////////////////////////////////////

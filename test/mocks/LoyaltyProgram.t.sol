@@ -9,6 +9,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import {IERC1155Receiver} from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import {ILoyaltyGift} from "../../src/interfaces/ILoyaltyGift.sol";
+import {ILoyaltyProgram} from "../../src/interfaces/ILoyaltyProgram.sol";
 
 import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -16,9 +17,8 @@ import {ERC6551Registry} from "./ERC6551Registry.t.sol";
 import {MockLoyaltyCard6551Account} from "./MockLoyaltyCard6551Account.t.sol";
 import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
 
-
 /**
- * @dev THIS CONTRACT HAS NOT BEEN AUDITED. WORSE: TESTING IS INCOMPLETE. DO NOT DEPLOY ON ANYTHING ELSE THAN A TEST CHAIN! 
+ * @dev THIS CONTRACT HAS NOT BEEN AUDITED. TESTING IS INCOMPLETE. DO NOT DEPLOY ON ANYTHING ELSE THAN A TEST CHAIN! 
  * 
  * @title Loyalty Program 
  * @author Seven Cedars, based on ERC-1155 implementation by OpenZeppelin.  
@@ -66,19 +66,7 @@ import {LoyaltyGift} from "../../src/LoyaltyGift.sol";
  *   ... £todo. 
  */
 
-contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGuard
-    /* errors */
-    error LoyaltyProgram__OnlyOwner();
-    error LoyaltyProgram__TransferDenied();
-    error LoyaltyProgram__RequestAlreadyExecuted();
-    error LoyaltyProgram__NotOwnerLoyaltyCard();
-    error LoyaltyProgram__RequestInvalid();
-    error LoyaltyProgram__LoyaltyGiftInvalid();
-    error LoyaltyProgram__LoyaltyVoucherInvalid();
-    error LoyaltyProgram__VoucherTransferInvalid(); 
-    error LoyaltyProgram__RequirementsGiftNotMet(); 
-    error LoyaltyProgram__IncorrectInterface(address loyaltyGift);
-
+contract LoyaltyProgram is ERC1155, IERC1155Receiver, ILoyaltyProgram { // removed: ReentrancyGuard
     /* Type declarations */
     using ECDSA for bytes32;
     using MessageHashUtils for bytes32;
@@ -124,12 +112,6 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     mapping(address loyaltyGiftAddress => mapping(uint256 loyaltyGiftId => uint256 exists)) private s_LoyaltyVouchersRedeemable; // NB! 0 = true & 1 = false. OPPOSITE OF s_LoyaltyGiftsClaimable!
     uint256 private s_loyaltyCardCounter;
     address public s_erc6551Implementation;
-
-    /* Events */
-    event DeployedLoyaltyProgram(address indexed owner, string name, string version);
-    event AddedLoyaltyGift(address indexed loyaltyGift, uint256 loyaltyGiftId);
-    event RemovedLoyaltyGiftClaimable(address indexed loyaltyGift, uint256 loyaltyGiftId);
-    event RemovedLoyaltyGiftRedeemable(address indexed loyaltyGift, uint256 loyaltyGiftId);
 
     /* Modifiers */
     modifier onlyOwner() {
@@ -292,8 +274,26 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
     }
 
     /**
+     * @notice checks if requirements are met for loyaltyGift. 
+     * 
+     * @dev This function can be called by loyaltyCards (in contrast to function requirementsMet at Gift contract that can only be called by a LoyaltyProgram). 
+     * 
+     */
+    function checkRequirementsLoyaltyGiftMet(
+        address loyaltyGiftAddress,
+        uint256 loyaltyGiftId 
+    ) public returns (bool) {
+        uint256 balanceSender = balanceOf(msg.sender, 0);  
+        if (balanceSender == 0) {
+            revert ("Sender does not own loyalty points"); 
+        }
+        return ILoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(msg.sender, loyaltyGiftId, balanceSender); 
+    }
+
+    /**
      * @notice mint loyaltyGifts at external loyaltyGift contract.
      * @param loyaltyGiftAddress address of loyalty gift contract.
+     * @param loyaltyGiftIds id of loyaltyGift 
      * @param numberOfVouchers amount of vouchers to be minted.
      *
      * @dev the limit of loyalty vouchers that customers can be gifted is limited by the amount of vouchers minted by the owner of loyalty program.
@@ -494,15 +494,17 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         transferLoyaltyVoucher(loyaltyCardAddress, s_owner, loyaltyGiftId, loyaltyGiftAddress); 
     }
 
+    /* Implementation ERC standards */ 
+
     /**
-     * @notice implementation ERC1155 receipt check. See https://docs.openzeppelin.com/contracts/3.x/api/token/erc1155#IERC1155Receiver-onERC1155Received-address-address-uint256-uint256-bytes- 
+     * @notice implementation ERC-1155 receipt check. See https://docs.openzeppelin.com/contracts/3.x/api/token/erc1155#IERC1155Receiver-onERC1155Received-address-address-uint256-uint256-bytes- 
      */
     function onERC1155Received(address, address, uint256, uint256, bytes memory) public virtual returns (bytes4) {
         return this.onERC1155Received.selector;
     }
 
     /**
-     * @notice implementation ERC1155 receipt check. See https://docs.openzeppelin.com/contracts/3.x/api/token/erc1155#IERC1155Receiver-onERC1155Received-address-address-uint256-uint256-bytes- 
+     * @notice implementation ERC-1155 receipt check. See https://docs.openzeppelin.com/contracts/3.x/api/token/erc1155#IERC1155Receiver-onERC1155Received-address-address-uint256-uint256-bytes- 
      */
     function onERC1155BatchReceived(address, address, uint256[] memory, uint256[] memory, bytes memory)
         public
@@ -510,6 +512,17 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         returns (bytes4)
     {
         return this.onERC1155BatchReceived.selector;
+    }
+
+    /**
+     * @notice implementation for ERC-165 interface id. 
+     * 
+     * @param interfaceId: id of interface 
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override (IERC165, ERC1155) returns (bool) {
+      return 
+        interfaceId == type(ILoyaltyProgram).interfaceId || 
+        super.supportsInterface(interfaceId);
     }
 
     /* internal */
@@ -643,3 +656,30 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver { // removed: ReentrancyGua
         return s_nonceLoyaltyCard[loyaltyCardAddress];
     }
 }
+
+// Notes to self (£todo): 
+// When reviewing this code, check: https://github.com/transmissions11/solcurity
+// see also: https://github.com/nascentxyz/simple-security-toolkit
+// see: https://solidity-by-example.org/structs/ re how to create structs
+
+
+// Structure contract // -- from Patrick Collins. 
+/* version */
+/* imports */
+/* errors */
+/* interfaces, libraries, contracts */
+/* Type declarations */
+/* State variables */
+/* Events */
+/* Modifiers */
+
+/* FUNCTIONS: */
+/* constructor */
+/* receive function (if exists) */
+/* fallback function (if exists) */
+/* external */
+/* public */
+/* internal */
+/* private */
+/* internal & private view & pure functions */
+/* external & public view & pure functions */
