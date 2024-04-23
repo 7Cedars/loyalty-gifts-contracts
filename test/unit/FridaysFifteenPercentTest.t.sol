@@ -67,7 +67,6 @@ contract FridaysFifteenPercentTest is Test {
         _; 
     }
 
-
     function setUp() external {
         DeployFridaysFifteenPercent giftDeployer = new DeployFridaysFifteenPercent();
         loyaltyGift = giftDeployer.run();
@@ -121,16 +120,15 @@ contract FridaysFifteenPercentTest is Test {
       loyaltyGift.requirementsLoyaltyGiftMet(addressOne, 0, 2500); 
     }
 
-    function testRequirementPassesWithSufficientPointsAndCorrectDayOfWeek() public programHasCardsPoints { 
-      
+    function testRequirementPassesWithSufficientPointsAndCorrectDayOfWeek() public { 
       vm.warp(1712282400); // = Friday 5 April 2024
       (uint256 year, uint256 month, uint256 day) = DateTime.timestampToDate(block.timestamp); 
       console.logUint(year); 
       console.logUint(month); 
       console.logUint(day); 
 
-      vm.prank(addressZero); 
-      (bool result) = loyaltyProgram.checkRequirementsLoyaltyGiftMet(loyaltyCardAddress, address(loyaltyGift), 0);
+      vm.prank(address(loyaltyProgram)); 
+      (bool result) = loyaltyGift.requirementsLoyaltyGiftMet(loyaltyCardAddress, 0, 2500);
       assertEq(result, true); 
     }
     

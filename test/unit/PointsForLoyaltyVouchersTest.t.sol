@@ -104,6 +104,12 @@ contract PointsForLoyaltyVouchersTest is Test {
         loyaltyProgram.mintLoyaltyVouchers(address(loyaltyGift), VOUCHERS_TO_MINT, AMOUNT_VOUCHERS_TO_MINT);
     }
 
+    ///////////////////////////////////////////////
+    ///     test RequiremntMet                  ///
+    ///////////////////////////////////////////////
+
+
+
     // For further testing, see integration tests.
    
 }
