@@ -138,6 +138,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver, ILoyaltyProgram { // remov
         }
         _;
     }
+    function test() public {} 
 
     /**
      * @notice constructor function for Loyalty program contract.

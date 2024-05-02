@@ -35,7 +35,6 @@ contract PointsForLoyaltyGiftsTest is Test {
     ///                   Setup                 ///
     ///////////////////////////////////////////////
 
-
     function setUp() external {
         string memory rpc_url = vm.envString("SELECTED_RPC_URL"); 
         uint256 forkId = vm.createFork(rpc_url);
