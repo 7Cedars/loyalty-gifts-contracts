@@ -70,6 +70,10 @@ contract PointsForLoyaltyVouchers_testFuzz is Test {
     }
 
     function setUp() external {
+        string memory rpc_url = vm.envString("SELECTED_RPC_URL"); 
+        uint256 forkId = vm.createFork(rpc_url);
+        vm.selectFork(forkId);
+
         DeployPointsForLoyaltyVouchers deployer = new DeployPointsForLoyaltyVouchers();
         loyaltyGift = deployer.run();
 

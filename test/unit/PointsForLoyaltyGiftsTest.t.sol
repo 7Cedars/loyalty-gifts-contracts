@@ -14,7 +14,7 @@ import {HelperConfig} from "../../script/HelperConfig.s.sol";
  * @author Seven Cedars
  * @notice Tests are intentionally kept very simple.
  */
-
+    
 contract PointsForLoyaltyGiftsTest is Test {
     /**
      * events
@@ -37,6 +37,10 @@ contract PointsForLoyaltyGiftsTest is Test {
 
 
     function setUp() external {
+        string memory rpc_url = vm.envString("SELECTED_RPC_URL"); 
+        uint256 forkId = vm.createFork(rpc_url);
+        vm.selectFork(forkId);
+
         DeployPointsForLoyaltyGifts deployer = new DeployPointsForLoyaltyGifts();
         loyaltyGift = deployer.run();
 

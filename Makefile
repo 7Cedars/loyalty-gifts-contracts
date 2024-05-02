@@ -34,7 +34,6 @@ anvil :; anvil -m 'test test test test test test test test test test test junk' 
 verify:
 	@forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch --constructor-args 0x00000000000000000000000000000000000000000000d3c21bcecceda1000000 --etherscan-api-key $(ETHERSCAN_API_KEY) --compiler-version v0.8.19+commit.7dd6d404 0x089dc24123e0a27d44282a1ccc2fd815989e3300 src/OurToken.sol:OurToken
 
-
 ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
 	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 endif
@@ -44,9 +43,6 @@ endif
 ###############################
 SEPOLIA_FORKED_TEST_ARGS := --fork-url $(SEPOLIA_RPC_URL) 
 SEPOLIA_FORKED_DEPLOY_ARGS := --fork-url $(SEPOLIA_RPC_URL) --broadcast --account dev_2 --sender ${DEV2_ADDRESS} --verify --etherscan-api-key $(ETHERSCAN_API_KEY)
-
-sepoliaForkTest: 
-	@forge test $(SEPOLIA_FORKED_TEST_ARGS) -vvvv 
 
 sepoliaForkedDeployTest: 
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(SEPOLIA_FORKED_TEST_ARGS)
@@ -62,9 +58,6 @@ sepoliaForkedDeploy:
 ###############################
 OPT_SEPOLIA_FORKED_TEST_ARGS := --fork-url $(OPT_SEPOLIA_RPC_URL) 
 OPT_SEPOLIA_FORKED_DEPLOY_ARGS := --fork-url $(OPT_SEPOLIA_RPC_URL) --broadcast --account dev_2 --sender ${DEV2_ADDRESS} --verify --etherscan-api-key $(OPT_ETHERSCAN_API_KEY)
-
-optSepoliaForkTest: 
-	@forge test $(OPT_SEPOLIA_FORKED_TEST_ARGS) -vvvv 
 
 optSepoliaForkedDeployTest: 
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(OPT_SEPOLIA_FORKED_TEST_ARGS)
@@ -86,9 +79,6 @@ optSepoliaForkedDeploy:
 ARB_SEPOLIA_FORKED_TEST_ARGS := --fork-url $(ARB_SEPOLIA_RPC_URL) 
 ARB_SEPOLIA_FORKED_DEPLOY_ARGS := --fork-url $(ARB_SEPOLIA_RPC_URL) --broadcast --account dev_2 --sender ${DEV2_ADDRESS} --verify --etherscan-api-key $(ARBISCAN_API_KEY)
 
-arbSepoliaForkTest: 
-	@forge test $(ARB_SEPOLIA_FORKED_TEST_ARGS) 
-
 arbSepoliaForkedDeployTest: 
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(ARB_SEPOLIA_FORKED_TEST_ARGS)
 	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(ARB_SEPOLIA_FORKED_TEST_ARGS)
@@ -103,9 +93,6 @@ arbSepoliaForkedDeploy:
 MUMBAI_SEPOLIA_FORKED_TEST_ARGS := --fork-url $(MUMBAI_POLYGON_RPC_URL) 
 MUMBAI_SEPOLIA_FORKED_DEPLOY_ARGS := --fork-url $(MUMBAI_POLYGON_RPC_URL) --broadcast --account dev_2 --sender ${DEV2_ADDRESS} --verify --etherscan-api-key $(POLYGONSCAN_API_KEY)
 
-mumbaiForkTest: 
-	@forge test $(MUMBAI_SEPOLIA_FORKED_TEST_ARGS) 
-
 mumbaiForkedDeployTest: 
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(MUMBAI_SEPOLIA_FORKED_TEST_ARGS)
 	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(MUMBAI_SEPOLIA_FORKED_TEST_ARGS)
@@ -114,20 +101,5 @@ mumbaiForkedDeploy:
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(MUMBAI_SEPOLIA_FORKED_DEPLOY_ARGS)
 	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(MUMBAI_SEPOLIA_FORKED_DEPLOY_ARGS)
 
-##################################
-#     Local testnet							 #
-##################################
-ANVIL_ARGS_0 := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY_0) --broadcast
-ANVIL_TEST_ARGS := --rpc-url http://localhost:8545
-
-anvilDeployGifts:
-	@forge script script/DeployFridaysFifteenPercent.s.sol:DeployFridaysFifteenPercent $(ANVIL_ARGS_0)
-	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(ANVIL_ARGS_0)
-	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(ANVIL_ARGS_0)
-	@forge script script/DeployPointsForPseudoRaffle.s.sol:DeployPointsForPseudoRaffle $(ANVIL_ARGS_0)
-	@forge script script/DeployTieredAccess.s.sol:DeployTieredAccess $(ANVIL_ARGS_0)
-
-anvilTest:
-	@forge test --match-test testRequirementPassesWithSufficientPointsAndCorrectDayOfWeek $(ANVIL_TEST_ARGS) -vvvv
 
 

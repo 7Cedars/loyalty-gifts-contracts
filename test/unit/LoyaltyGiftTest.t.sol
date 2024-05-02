@@ -33,6 +33,10 @@ contract LoyaltyGiftsTest is Test {
     ///            Setup                    ///
     ///////////////////////////////////////////
     function setUp() external {
+        string memory rpc_url = vm.envString("SELECTED_RPC_URL"); 
+        uint256 forkId = vm.createFork(rpc_url);
+        vm.selectFork(forkId);
+
         HelperConfig helperConfig = new HelperConfig();
         string memory name = "Loyalty Program"; 
         string memory version = "1";

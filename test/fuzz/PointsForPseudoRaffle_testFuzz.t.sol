@@ -73,6 +73,10 @@ contract PointsForPseudoRaffle_testFuzz is Test {
     LoyaltyProgram loyaltyProgram; 
 
     function setUp() external {
+        string memory rpc_url = vm.envString("SELECTED_RPC_URL"); 
+        uint256 forkId = vm.createFork(rpc_url);
+        vm.selectFork(forkId);
+
         DeployPointsForPseudoRaffle giftDeployer = new DeployPointsForPseudoRaffle();
         loyaltyGift = giftDeployer.run();
 
