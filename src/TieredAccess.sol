@@ -25,7 +25,7 @@ contract TieredAccess is LoyaltyGift {
     @param cost =>  What is cost (in points) of voucher? 
     @param hasAdditionalRequirements =>  Are their additional requirements? 
     */
-    string version = "test_version_0.2"; 
+    string version = "alpha.2"; 
     uint256[] isClaimable = [0, 0, 0, 1, 1, 1]; 
     uint256[] isVoucher = [1, 1, 1, 0, 0, 1]; 
     uint256[] cost = [0, 0, 0, 1500, 3000, 5000];
@@ -42,7 +42,7 @@ contract TieredAccess is LoyaltyGift {
      */
     constructor()
         LoyaltyGift(
-            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmVGdaVoRSn9fJ4in6ghKaZv4QF9hKur6BD9J2QvSsGwVd/{id}",
+            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmZUFTwBYKckH54ertA8pL3GdTZQqCEdybi1CjbJF7qXyS/{id}",
             version,
             isClaimable,
             isVoucher,

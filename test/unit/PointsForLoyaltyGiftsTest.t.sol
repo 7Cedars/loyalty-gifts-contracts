@@ -54,7 +54,7 @@ contract PointsForLoyaltyGiftsTest is Test {
 
     function testDeployEmitsevent() public {
         uint256[] memory isVoucher = new uint256[](2); 
-        string memory version = "test_version_0.2";
+        string memory version = "alpha.2";
         vm.expectEmit(true, false, false, false);
         emit LoyaltyGiftDeployed(addressZero, version);
         

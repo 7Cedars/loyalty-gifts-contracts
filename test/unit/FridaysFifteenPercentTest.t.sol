@@ -85,7 +85,7 @@ contract FridaysFifteenPercentTest is Test {
     }
 
     function testDeployEmitsevent() public {
-      string memory version = "test_version_0.2";
+      string memory version = "alpha.2";
 
       vm.expectEmit(true, false, false, false);
       emit LoyaltyGiftDeployed(addressZero, version);

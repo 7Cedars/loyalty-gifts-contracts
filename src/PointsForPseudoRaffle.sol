@@ -29,7 +29,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
     @param cost =>  What is cost (in points) of voucher? 
     @param hasAdditionalRequirements =>  Are their additional requirements? 
     */
-    string version = "test_version_0.2"; 
+    string version = "alpha.2"; 
     uint256[] isClaimable = [1, 0, 0, 0]; 
     uint256[] isVoucher = [1, 1, 1, 1]; 
     uint256[] cost = [1250, 0, 0, 0];
@@ -42,7 +42,7 @@ contract PointsForPseudoRaffle is LoyaltyGift {
      */
     constructor()
         LoyaltyGift(
-            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmYwka9JjzUCtFiF2PkMhAyfnL8cJSwjPL1fiszR21xfV5/{id}",
+            "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmWZmc747QVTPGDZ5c7899NM425Qz6uNvvGQwiTyAY7cwx/{id}",
             version,
             isClaimable,
             isVoucher,
