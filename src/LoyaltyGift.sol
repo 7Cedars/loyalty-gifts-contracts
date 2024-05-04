@@ -57,6 +57,7 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
      */
     constructor(
         string memory loyaltyGiftUri, 
+        string memory version, 
         uint256[] memory isClaimable,
         uint256[] memory isVoucher,
         uint256[] memory cost,
@@ -67,7 +68,7 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
             s_cost = cost;
             s_hasAdditionalRequirements = hasAdditionalRequirements;  
             
-            emit LoyaltyGiftDeployed(msg.sender, isVoucher);
+            emit LoyaltyGiftDeployed(msg.sender, version);
     }
 
     /**

@@ -58,7 +58,6 @@ sepoliaForkedDeploy:
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(SEPOLIA_FORKED_DEPLOY_ARGS)
 	@forge script script/DeployPointsForLoyaltyVouchers.s.s.sol:DeployPointsForLoyaltyVouchers.s $(SEPOLIA_FORKED_DEPLOY_ARGS)
 
-
 ###############################
 # 		OPSepolia testnet				#
 ###############################
@@ -121,3 +120,21 @@ mumbaiForkedDeployTest:
 mumbaiForkedDeploy: 
 	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(MUMBAI_SEPOLIA_FORKED_DEPLOY_ARGS)
 	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(MUMBAI_SEPOLIA_FORKED_DEPLOY_ARGS)
+
+###############################
+# 			 local testnet				#
+###############################
+ANVIL_ARGS_0 := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY_0) --broadcast
+
+anvilDeployGifts: 
+	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(ANVIL_ARGS_0)
+	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(ANVIL_ARGS_0)	
+	@forge script script/DeployFridaysFifteenPercent.s.sol:DeployFridaysFifteenPercent $(ANVIL_ARGS_0)	
+	@forge script script/DeployPointsForPseudoRaffle.s.sol:DeployPointsForPseudoRaffle $(ANVIL_ARGS_0)
+	@forge script script/DeployTieredAccess.s.sol:DeployTieredAccess $(ANVIL_ARGS_0)
+	
+
+
+
+
+
