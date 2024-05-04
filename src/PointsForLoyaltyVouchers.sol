@@ -26,6 +26,7 @@ contract PointsForLoyaltyVouchers is LoyaltyGift {
     @param cost =>  What is cost (in points) of voucher? 
     @param hasAdditionalRequirements =>  Are their additional requirements? 
     */
+    string version = "test_version_0.2"; 
     uint256[] isClaimable = [1, 1, 1]; 
     uint256[] isVoucher = [1, 1, 1]; 
     uint256[] cost = [2500, 4500, 50_000];
@@ -40,6 +41,7 @@ contract PointsForLoyaltyVouchers is LoyaltyGift {
     constructor()
         LoyaltyGift(
             "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmXS9s48RkDDDSqsyjBHN9HRSXpUud3FsBDVa1uZjXYMAH/{id}",
+            version,
             isClaimable,
             isVoucher,
             cost,

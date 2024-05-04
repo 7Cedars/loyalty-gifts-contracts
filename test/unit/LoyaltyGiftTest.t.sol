@@ -14,7 +14,7 @@ contract LoyaltyGiftsTest is Test {
      */
     event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value);
     event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values);
-    event LoyaltyGiftDeployed(address indexed issuer, uint256[] isVoucher);
+    event LoyaltyGiftDeployed(address indexed issuer, string indexed version);
 
     uint256 keyZero = vm.envUint("DEFAULT_ANVIL_KEY_0");
     address addressZero = vm.addr(keyZero);
@@ -22,6 +22,7 @@ contract LoyaltyGiftsTest is Test {
     address addressOne = vm.addr(keyOne);
 
     string GIFT_URI = "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmX24aGKazfEtBzDip4fS6Jb7MnXd9GbFw5oQ3ZqiRKb3t/{id}"; 
+    string version = "test_version_0.2"; 
     uint256[] isClaimable = [1, 1]; 
     uint256[] isVoucher = [0, 1]; 
     uint256[] cost = [2500, 4500];
@@ -46,7 +47,8 @@ contract LoyaltyGiftsTest is Test {
 
         vm.startBroadcast();
         loyaltyGift = new LoyaltyGift(
-        GIFT_URI,  
+        GIFT_URI,
+        version,
         isClaimable,
         isVoucher,
         cost,
@@ -64,11 +66,12 @@ contract LoyaltyGiftsTest is Test {
 
     function testDeployEmitsevent() public {
         vm.expectEmit(true, false, false, false);
-        emit LoyaltyGiftDeployed(addressZero, isVoucher);
+        emit LoyaltyGiftDeployed(addressZero, version);
 
         vm.prank(addressZero);
         new LoyaltyGift(
-        GIFT_URI,  
+        GIFT_URI,
+        version, 
         isClaimable,
         isVoucher,
         cost,

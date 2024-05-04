@@ -21,7 +21,7 @@ contract PointsForLoyaltyGiftsTest is Test {
      */
     event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value);
     event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values);
-    event LoyaltyGiftDeployed(address indexed issuer, uint256[] isVoucher);
+    event LoyaltyGiftDeployed(address indexed issuer, string indexed version);
 
     uint256 keyZero = vm.envUint("DEFAULT_ANVIL_KEY_0");
     address addressZero = vm.addr(keyZero);
@@ -54,9 +54,9 @@ contract PointsForLoyaltyGiftsTest is Test {
 
     function testDeployEmitsevent() public {
         uint256[] memory isVoucher = new uint256[](2); 
-
+        string memory version = "test_version_0.2";
         vm.expectEmit(true, false, false, false);
-        emit LoyaltyGiftDeployed(addressZero, isVoucher);
+        emit LoyaltyGiftDeployed(addressZero, version);
         
         vm.prank(addressZero);
         new PointsForLoyaltyGifts();
