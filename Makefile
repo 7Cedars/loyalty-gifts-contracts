@@ -78,8 +78,8 @@ optSepoliaForkedDeployTest:
 	
 optSepoliaForkedDeploy: 
 #	@forge script script/DeployPointsForLoyaltyGifts.s.sol:DeployPointsForLoyaltyGifts $(OPT_SEPOLIA_FORKED_DEPLOY_ARGS)
-	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(OPT_SEPOLIA_FORKED_DEPLOY_ARGS)	
-	@forge script script/DeployFridaysFifteenPercent.s.sol:DeployFridaysFifteenPercent $(OPT_SEPOLIA_FORKED_DEPLOY_ARGS)	
+#	@forge script script/DeployPointsForLoyaltyVouchers.s.sol:DeployPointsForLoyaltyVouchers $(OPT_SEPOLIA_FORKED_DEPLOY_ARGS)	
+#	@forge script script/DeployFridaysFifteenPercent.s.sol:DeployFridaysFifteenPercent $(OPT_SEPOLIA_FORKED_DEPLOY_ARGS)	
 	@forge script script/DeployPointsForPseudoRaffle.s.sol:DeployPointsForPseudoRaffle $(OPT_SEPOLIA_FORKED_DEPLOY_ARGS)
 	@forge script script/DeployTieredAccess.s.sol:DeployTieredAccess $(OPT_SEPOLIA_FORKED_DEPLOY_ARGS)
 

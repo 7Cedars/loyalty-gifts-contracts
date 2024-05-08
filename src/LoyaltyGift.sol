@@ -68,7 +68,7 @@ contract LoyaltyGift is ERC1155, ILoyaltyGift {
             s_cost = cost;
             s_hasAdditionalRequirements = hasAdditionalRequirements;  
             
-            emit LoyaltyGiftDeployed(msg.sender, version);
+            emit LoyaltyGiftDeployed(msg.sender, version, isClaimable.length);
     }
 
     /**

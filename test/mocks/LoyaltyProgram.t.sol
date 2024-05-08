@@ -305,7 +305,7 @@ contract LoyaltyProgram is ERC1155, IERC1155Receiver, ILoyaltyProgram { // remov
     ) public returns (bool) {
         uint256 balanceSender = balanceOf(loyaltyCard, 0);  
         if (balanceSender == 0) {
-            revert ("Sender does not own loyalty points"); 
+            revert ("No loyalty points on card."); 
         }
         return ILoyaltyGift(loyaltyGiftAddress).requirementsLoyaltyGiftMet(loyaltyCard, loyaltyGiftId, balanceSender); 
     }
