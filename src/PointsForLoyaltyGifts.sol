@@ -25,7 +25,7 @@ contract PointsForLoyaltyGifts is LoyaltyGift {
     @param cost =>  What is cost (in points) of voucher? 
     @param hasAdditionalRequirements =>  Are their additional requirements? 
     */
-    string version = "alpha.2"; 
+    string version = "alpha.3"; 
     uint256[] isClaimable = [1, 1]; 
     uint256[] isVoucher = [0, 0]; 
     uint256[] cost = [2500, 4500];

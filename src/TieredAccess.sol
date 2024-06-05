@@ -25,7 +25,7 @@ contract TieredAccess is LoyaltyGift {
     @param cost =>  What is cost (in points) of voucher? 
     @param hasAdditionalRequirements =>  Are their additional requirements? 
     */
-    string version = "alpha.2"; 
+    string version = "alpha.3"; 
     uint256[] isClaimable = [0, 0, 0, 1, 1, 1]; 
     uint256[] isVoucher = [1, 1, 1, 0, 0, 1]; 
     uint256[] cost = [0, 0, 0, 1500, 3000, 5000];
