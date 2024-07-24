@@ -20,50 +20,18 @@
       "isFixedGasLimit": false
     }
   ],
-  "receipts": [
-    {
-      "transactionHash": "0x107115d1ac9ecc5351420c3373f7eaa3ca328e0aad6dbf4fb1c10d8311f48812",
-      "transactionIndex": "0x1",
-      "blockHash": "0x17273f847afd56fb3509f69425de5a503987409e79779bba54d2b7be65f76de6",
-      "blockNumber": "0xdf2960",
-      "from": "0x328735d26e5Ada93610F0006c32abE2278c46211",
-      "to": null,
-      "cumulativeGasUsed": "0x1d4870",
-      "gasUsed": "0x1c9d31",
-      "contractAddress": "0xA070608Bc65116D860f3aCF3086Bc345DccA484C",
-      "logs": [
-        {
-          "address": "0xA070608Bc65116D860f3aCF3086Bc345DccA484C",
-          "topics": [
-            "0x24f5aaf4b64c0f06e30cc71278a83b87403d00a33d12f4a1e973d5e405e69c64",
-            "0x000000000000000000000000328735d26e5ada93610f0006c32abe2278c46211",
-            "0xce5a46277e4e6003e23ff0798dc66683597389b9c54c0fb10f08155a0d4558ad",
-            "0x0000000000000000000000000000000000000000000000000000000000000001"
-          ],
-          "data": "0x",
-          "blockHash": "0x17273f847afd56fb3509f69425de5a503987409e79779bba54d2b7be65f76de6",
-          "blockNumber": "0xdf2960",
-          "transactionHash": "0x107115d1ac9ecc5351420c3373f7eaa3ca328e0aad6dbf4fb1c10d8311f48812",
-          "transactionIndex": "0x1",
-          "logIndex": "0x0",
-          "removed": false
-        }
-      ],
-      "status": "0x1",
-      "logsBloom": "0x00000000000000020000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000040000000000000000480000000000000000000000000010040000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020080000000000000000000000000000000000000000000000000000000000000000000000000000000000008004000800000000000100000000000040000000000000000000000000000000000000000000000000000000000000000000",
-      "type": "0x2",
-      "effectiveGasPrice": "0xb2d05f5a"
-    }
-  ],
+  "receipts": [],
   "libraries": [],
-  "pending": [],
+  "pending": [
+    "0x107115d1ac9ecc5351420c3373f7eaa3ca328e0aad6dbf4fb1c10d8311f48812"
+  ],
   "returns": {
     "0": {
       "internal_type": "contract FridaysFifteenPercent",
       "value": "0xA070608Bc65116D860f3aCF3086Bc345DccA484C"
     }
   },
-  "timestamp": 1721052801,
+  "timestamp": 1721052778,
   "chain": 11155420,
   "multi": false,
   "commit": "ccf5b29"
